@@ -303,3 +303,24 @@ export const fileImportRows = pgTable(
     index("idx_file_import_rows_match_status").on(table.matchStatus),
   ]
 );
+
+// User Settings — set during /setup wizard, drives all entity/state/tax behavior
+export const userSettings = pgTable("user_settings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // Entity & tax configuration
+  entityType: text("entity_type").notNull().default("sole_prop"), // sole_prop | smllc | s_corp | partnership
+  state: text("state").notNull().default("XX"),                   // 2-letter state code
+  filingMethod: text("filing_method").notNull().default("self"),  // self | cpa
+  taxYearStart: text("tax_year_start").notNull().default("01-01"), // MM-DD
+  fiscalYearEnd: text("fiscal_year_end").notNull().default("12-31"),
+  // Feature flags
+  plaidEnabled: boolean("plaid_enabled").notNull().default(true),
+  // Display
+  businessName: text("business_name"),
+  ownerName: text("owner_name"),
+  timezone: text("timezone").notNull().default("America/New_York"),
+  // Wizard state
+  setupComplete: boolean("setup_complete").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
