@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { quarterlyOverview } from "@/lib/services/quarterly-estimates";
 import { QuarterlyView } from "./quarterly-view";
 

@@ -77,8 +77,6 @@ async function main() {
       id: txId,
       date: d.date,
       description: d.description,
-      source: "manual",
-      externalId: `demo-${txId}`,
       memo: DEMO_TAG,
     });
     await db.insert(transactionLines).values([

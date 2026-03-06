@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { fetchTaxData } from "./actions";
 import { TaxView } from "./tax-view";
 

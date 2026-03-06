@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getPlaidItems } from "@/lib/db/queries";
 import { SettingsView } from "./settings-view";
 

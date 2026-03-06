@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getLedgerAccounts } from "@/lib/db/queries";
 import { TransactionForm } from "./transaction-form";
 

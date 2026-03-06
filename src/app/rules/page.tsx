@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAllRules, getLedgerAccounts } from "@/lib/db/queries";
 import { RulesTable } from "./rules-table";
 

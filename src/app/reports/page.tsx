@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { trialBalance, profitAndLoss } from "@/lib/services/reports";
 import { ReportsView } from "./reports-view";
 

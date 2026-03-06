@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getPlaidItems, getLedgerAccounts } from "@/lib/db/queries";
 import { PlaidLinkButton } from "@/components/plaid-link-button";
 import { SyncNowButton } from "@/components/sync-now-button";

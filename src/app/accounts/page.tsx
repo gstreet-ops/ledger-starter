@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAccountBalances } from "@/lib/db/queries";
 import { AccountsTable } from "./accounts-table";
 import { parseMoney } from "@/lib/utils/money";

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getRecentTransactions, getAccountBalances } from "@/lib/db/queries";
 import { profitAndLoss, monthlyPnl } from "@/lib/services/reports";
 import {
