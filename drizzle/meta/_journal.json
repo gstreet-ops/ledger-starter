@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1772750693170,
+      "tag": "0000_certain_roulette",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772755178006,
+      "tag": "0001_big_enchantress",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772767909506,
+      "tag": "0002_add-indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772776685639,
+      "tag": "0003_add-file-import-tables",
+      "breakpoints": true
+    }
+  ]
+}
