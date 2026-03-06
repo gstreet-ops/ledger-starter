@@ -81,11 +81,13 @@ export function TaxView({ initialData, initialYear }: { initialData: TaxData; in
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Georgia Income Tax</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">{data.state.stateLabel} Income Tax</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xl font-bold">{fmt(data.ga.tax)}</p>
-            <p className="text-xs text-muted-foreground">Effective {pct(data.ga.effectiveRate)}</p>
+            <p className="text-xl font-bold">{fmt(data.state.tax)}</p>
+            <p className="text-xs text-muted-foreground">
+              {data.state.noIncomeTax ? "No state income tax" : `Effective ${pct(data.state.effectiveRate)}`}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -113,7 +115,7 @@ export function TaxView({ initialData, initialYear }: { initialData: TaxData; in
           })}
         </div>
         <p className="text-xs text-muted-foreground mt-2">
-          Total estimated tax: {fmt(data.quarterly.totalAnnualTax)} (Federal {fmt(data.quarterly.federalTax)} + SE {fmt(data.quarterly.seTax)} + GA {fmt(data.quarterly.gaTax)})
+          Total estimated tax: {fmt(data.quarterly.totalAnnualTax)} (Federal {fmt(data.quarterly.federalTax)} + SE {fmt(data.quarterly.seTax)} + {data.state.stateLabel} {fmt(data.quarterly.stateTaxAmount)})
         </p>
       </div>
 

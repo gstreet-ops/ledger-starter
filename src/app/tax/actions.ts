@@ -4,27 +4,30 @@ import {
   scheduleCReport,
   selfEmploymentTax,
   federalIncomeTax,
-  georgiaIncomeTax,
+  stateTax,
+  getUserSettings,
   quarterlyEstimate,
 } from "@/lib/services/tax";
 import { parseMoney } from "@/lib/utils/money";
 
 export async function fetchTaxData(year: number) {
-  const [scheduleC, quarterly] = await Promise.all([
+  const [scheduleC, quarterly, settings] = await Promise.all([
     scheduleCReport(year),
     quarterlyEstimate(year),
+    getUserSettings(),
   ]);
 
+  const state = settings?.state ?? "XX";
   const netProfit = parseMoney(scheduleC.netProfit);
   const se = selfEmploymentTax(netProfit);
   const federal = federalIncomeTax(netProfit);
-  const ga = georgiaIncomeTax(netProfit);
+  const stateResult = stateTax(netProfit, state);
 
   return {
     scheduleC,
     se,
     federal,
-    ga,
+    state: stateResult,
     quarterly,
   };
 }

@@ -134,8 +134,9 @@ export function QuarterlyView({
             Based on annualized net profit of{" "}
             {fmt(data.ytdProjection.annualizedProfit)} — Federal{" "}
             {fmt(data.ytdProjection.federalTax)} + SE{" "}
-            {fmt(data.ytdProjection.seTax)} + GA{" "}
-            {fmt(data.ytdProjection.gaTax)}
+            {fmt(data.ytdProjection.seTax)} +{" "}
+            {data.ytdProjection.stateLabel}{" "}
+            {fmt(data.ytdProjection.stateTax)}
           </p>
         </CardContent>
       </Card>

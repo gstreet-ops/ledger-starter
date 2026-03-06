@@ -11,7 +11,14 @@ import {
   taxCategories,
   transactions,
   transactionLines,
+  userSettings,
 } from "./schema";
+
+/** Get the single user_settings row, or null if setup not yet complete. */
+export async function getUserSettings() {
+  const [settings] = await db.select().from(userSettings).limit(1);
+  return settings ?? null;
+}
 
 export async function getPlaidItems() {
   const items = await db.select().from(plaidItems).orderBy(plaidItems.createdAt);

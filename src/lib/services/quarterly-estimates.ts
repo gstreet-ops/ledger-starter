@@ -6,8 +6,9 @@ import {
   scheduleCReport,
   selfEmploymentTax,
   federalIncomeTax,
-  georgiaIncomeTax,
+  stateTax,
   quarterlyDueDates,
+  getUserSettings,
 } from "./tax";
 
 export type QuarterStatus = "upcoming" | "due" | "overdue" | "paid";
@@ -29,7 +30,8 @@ export type QuarterlyOverview = {
     annualizedProfit: string;
     federalTax: string;
     seTax: string;
-    gaTax: string;
+    stateTax: string;
+    stateLabel: string;
     totalTax: string;
   };
   totalEstimated: string;
@@ -68,12 +70,15 @@ async function priorYearTax(
 
   if (netProfit <= 0) return null;
 
+  const settings = await getUserSettings();
+  const state = settings?.state ?? "GA";
+
   const federal = federalIncomeTax(netProfit);
   const se = selfEmploymentTax(netProfit);
-  const ga = georgiaIncomeTax(netProfit);
+  const st = stateTax(netProfit, state);
 
   const total =
-    parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(ga.tax);
+    parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(st.tax);
 
   return total > 0 ? { total, annualizedProfit: netProfit } : null;
 }
@@ -121,12 +126,15 @@ export async function quarterlyOverview(
   }
 
   // Compute projected taxes on annualized profit
+  const settings = await getUserSettings();
+  const state = settings?.state ?? "GA";
+
   const federal = federalIncomeTax(annualizedProfit);
   const se = selfEmploymentTax(annualizedProfit);
-  const ga = georgiaIncomeTax(annualizedProfit);
+  const st = stateTax(annualizedProfit, state);
 
   const totalAnnualTax =
-    parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(ga.tax);
+    parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(st.tax);
 
   // Safe harbor: use max of current projection vs prior year tax
   let safeHarborAnnual = totalAnnualTax;
@@ -176,7 +184,8 @@ export async function quarterlyOverview(
       annualizedProfit: annualizedProfit.toFixed(2),
       federalTax: federal.tax,
       seTax: se.totalSeTax,
-      gaTax: ga.tax,
+      stateTax: st.tax,
+      stateLabel: st.stateLabel,
       totalTax: totalAnnualTax.toFixed(2),
     },
     totalEstimated: (quarterlyAmount * 4).toFixed(2),

@@ -1,7 +1,76 @@
 import { eq, and, gte, lte, sql } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
-import { accounts, transactions, transactionLines } from "@/lib/db/schema";
+import { accounts, transactions, transactionLines, userSettings } from "@/lib/db/schema";
 import { parseMoney } from "@/lib/utils/money";
+
+// ---------------------------------------------------------------------------
+// State income tax rates
+// Add your state here if it isn't listed. All rates are approximate 2025 values.
+// Format: { rate: flat_rate, standardDeduction: single_filer_deduction }
+// For states with brackets, we use the top marginal rate as a conservative estimate.
+// ---------------------------------------------------------------------------
+export const STATE_TAX_RATES: Record<
+  string,
+  { rate: number; standardDeduction: number; label: string; noIncomeTax?: boolean }
+> = {
+  AL: { rate: 0.05,   standardDeduction: 2500,  label: "Alabama" },
+  AK: { rate: 0,      standardDeduction: 0,     label: "Alaska",     noIncomeTax: true },
+  AZ: { rate: 0.025,  standardDeduction: 13850, label: "Arizona" },
+  AR: { rate: 0.039,  standardDeduction: 2200,  label: "Arkansas" },
+  CA: { rate: 0.093,  standardDeduction: 5202,  label: "California" },
+  CO: { rate: 0.044,  standardDeduction: 14600, label: "Colorado" },
+  CT: { rate: 0.069,  standardDeduction: 0,     label: "Connecticut" },
+  DE: { rate: 0.066,  standardDeduction: 3250,  label: "Delaware" },
+  FL: { rate: 0,      standardDeduction: 0,     label: "Florida",    noIncomeTax: true },
+  GA: { rate: 0.0519, standardDeduction: 12000, label: "Georgia" },
+  HI: { rate: 0.11,   standardDeduction: 2200,  label: "Hawaii" },
+  ID: { rate: 0.058,  standardDeduction: 14600, label: "Idaho" },
+  IL: { rate: 0.0495, standardDeduction: 0,     label: "Illinois" },
+  IN: { rate: 0.0305, standardDeduction: 0,     label: "Indiana" },
+  IA: { rate: 0.057,  standardDeduction: 2210,  label: "Iowa" },
+  KS: { rate: 0.057,  standardDeduction: 3500,  label: "Kansas" },
+  KY: { rate: 0.045,  standardDeduction: 3160,  label: "Kentucky" },
+  LA: { rate: 0.03,   standardDeduction: 4500,  label: "Louisiana" },
+  ME: { rate: 0.0715, standardDeduction: 14600, label: "Maine" },
+  MD: { rate: 0.0575, standardDeduction: 2400,  label: "Maryland" },
+  MA: { rate: 0.05,   standardDeduction: 0,     label: "Massachusetts" },
+  MI: { rate: 0.0425, standardDeduction: 5400,  label: "Michigan" },
+  MN: { rate: 0.0985, standardDeduction: 14575, label: "Minnesota" },
+  MS: { rate: 0.05,   standardDeduction: 2300,  label: "Mississippi" },
+  MO: { rate: 0.048,  standardDeduction: 21900, label: "Missouri" },
+  MT: { rate: 0.059,  standardDeduction: 5540,  label: "Montana" },
+  NE: { rate: 0.0584, standardDeduction: 7900,  label: "Nebraska" },
+  NV: { rate: 0,      standardDeduction: 0,     label: "Nevada",     noIncomeTax: true },
+  NH: { rate: 0,      standardDeduction: 0,     label: "New Hampshire", noIncomeTax: true },
+  NJ: { rate: 0.1075, standardDeduction: 0,     label: "New Jersey" },
+  NM: { rate: 0.059,  standardDeduction: 12950, label: "New Mexico" },
+  NY: { rate: 0.0685, standardDeduction: 8000,  label: "New York" },
+  NC: { rate: 0.045,  standardDeduction: 12750, label: "North Carolina" },
+  ND: { rate: 0.025,  standardDeduction: 14600, label: "North Dakota" },
+  OH: { rate: 0.035,  standardDeduction: 2400,  label: "Ohio" },
+  OK: { rate: 0.0475, standardDeduction: 6350,  label: "Oklahoma" },
+  OR: { rate: 0.099,  standardDeduction: 2420,  label: "Oregon" },
+  PA: { rate: 0.0307, standardDeduction: 0,     label: "Pennsylvania" },
+  RI: { rate: 0.0599, standardDeduction: 10550, label: "Rhode Island" },
+  SC: { rate: 0.064,  standardDeduction: 14600, label: "South Carolina" },
+  SD: { rate: 0,      standardDeduction: 0,     label: "South Dakota", noIncomeTax: true },
+  TN: { rate: 0,      standardDeduction: 0,     label: "Tennessee",  noIncomeTax: true },
+  TX: { rate: 0,      standardDeduction: 0,     label: "Texas",      noIncomeTax: true },
+  UT: { rate: 0.0465, standardDeduction: 887,   label: "Utah" },
+  VT: { rate: 0.0875, standardDeduction: 7000,  label: "Vermont" },
+  VA: { rate: 0.0575, standardDeduction: 8000,  label: "Virginia" },
+  WA: { rate: 0,      standardDeduction: 0,     label: "Washington",  noIncomeTax: true },
+  WV: { rate: 0.065,  standardDeduction: 2000,  label: "West Virginia" },
+  WI: { rate: 0.0765, standardDeduction: 12380, label: "Wisconsin" },
+  WY: { rate: 0,      standardDeduction: 0,     label: "Wyoming",    noIncomeTax: true },
+  DC: { rate: 0.1075, standardDeduction: 13050, label: "Washington D.C." },
+};
+
+/** Fetch current user settings (returns null if setup not complete) */
+export async function getUserSettings() {
+  const [settings] = await db.select().from(userSettings).limit(1);
+  return settings ?? null;
+}
 
 // Schedule C line descriptions for display
 const SCHEDULE_C_LINES: Record<string, string> = {
@@ -144,36 +213,66 @@ export function selfEmploymentTax(netProfit: number): {
   };
 }
 
-// 2025 Georgia income tax brackets (single/married filing separately)
-// 2025 Georgia income tax: flat 5.19% (HB 1015 (2024) collapsed brackets
-// to a flat rate; HB 111 (2025) reduced the rate from 5.39% to 5.19%).
-// Standard deduction for single filers: $12,000 ($24,000 MFJ).
-// Personal exemptions were folded into the higher standard deduction.
-const GA_FLAT_RATE_2025 = 0.0519;
-const GA_STANDARD_DEDUCTION_SINGLE_2025 = 12000;
-
-export function georgiaIncomeTax(netProfit: number): {
+/**
+ * Generic state income tax calculator.
+ * Uses STATE_TAX_RATES to look up the user's state rate and standard deduction.
+ * Falls back to GA rates if state is unknown (safe default for an existing GA-built template).
+ *
+ * @param netProfit - Schedule C net profit
+ * @param state     - 2-letter state code from user_settings (e.g. "TX", "CA")
+ */
+export function stateTax(
+  netProfit: number,
+  state: string
+): {
   taxableIncome: string;
   tax: string;
   effectiveRate: string;
+  stateLabel: string;
+  noIncomeTax: boolean;
 } {
-  if (netProfit <= 0) {
-    return { taxableIncome: "0.00", tax: "0.00", effectiveRate: "0.00" };
+  const stateInfo = STATE_TAX_RATES[state.toUpperCase()] ?? STATE_TAX_RATES["GA"];
+
+  if (netProfit <= 0 || stateInfo.noIncomeTax) {
+    return {
+      taxableIncome: "0.00",
+      tax: "0.00",
+      effectiveRate: "0.00",
+      stateLabel: stateInfo.label,
+      noIncomeTax: stateInfo.noIncomeTax ?? false,
+    };
   }
 
-  // Start from AGI: net profit minus 50% of SE tax deduction
+  // AGI: net profit minus 50% of SE tax deduction
   const seTax = parseMoney(selfEmploymentTax(netProfit).totalSeTax);
   const agi = netProfit - seTax / 2;
-
-  const taxableIncome = Math.max(0, agi - GA_STANDARD_DEDUCTION_SINGLE_2025);
-
-  const tax = taxableIncome * GA_FLAT_RATE_2025;
-  const effectiveRate = netProfit > 0 ? ((tax / netProfit) * 100) : 0;
+  const taxableIncome = Math.max(0, agi - stateInfo.standardDeduction);
+  const tax = taxableIncome * stateInfo.rate;
+  const effectiveRate = netProfit > 0 ? (tax / netProfit) * 100 : 0;
 
   return {
     taxableIncome: taxableIncome.toFixed(2),
     tax: tax.toFixed(2),
     effectiveRate: effectiveRate.toFixed(2),
+    stateLabel: stateInfo.label,
+    noIncomeTax: false,
+  };
+}
+
+/**
+ * @deprecated Use stateTax(netProfit, state) instead.
+ * Kept for backward compatibility — calls stateTax with "GA".
+ */
+export function georgiaIncomeTax(netProfit: number): {
+  taxableIncome: string;
+  tax: string;
+  effectiveRate: string;
+} {
+  const result = stateTax(netProfit, "GA");
+  return {
+    taxableIncome: result.taxableIncome,
+    tax: result.tax,
+    effectiveRate: result.effectiveRate,
   };
 }
 
@@ -244,7 +343,8 @@ export async function quarterlyEstimate(year: number): Promise<{
   annualNetProfit: string;
   federalTax: string;
   seTax: string;
-  gaTax: string;
+  stateTaxAmount: string;
+  stateLabel: string;
   totalAnnualTax: string;
   quarterlyPayment: string;
   dueDates: { quarter: number; label: string; dueDate: string; amount: string }[];
@@ -252,11 +352,16 @@ export async function quarterlyEstimate(year: number): Promise<{
   const report = await scheduleCReport(year);
   const netProfit = parseMoney(report.netProfit);
 
+  // Read state from user_settings; fall back to GA if not configured
+  const settings = await getUserSettings();
+  const state = settings?.state ?? "GA";
+
   const federal = federalIncomeTax(netProfit);
   const se = selfEmploymentTax(netProfit);
-  const ga = georgiaIncomeTax(netProfit);
+  const stateResult = stateTax(netProfit, state);
 
-  const totalAnnualTax = parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(ga.tax);
+  const totalAnnualTax =
+    parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(stateResult.tax);
   const quarterlyPayment = totalAnnualTax / 4;
 
   const dates = quarterlyDueDates(year);
@@ -269,7 +374,8 @@ export async function quarterlyEstimate(year: number): Promise<{
     annualNetProfit: report.netProfit,
     federalTax: federal.tax,
     seTax: se.totalSeTax,
-    gaTax: ga.tax,
+    stateTaxAmount: stateResult.tax,
+    stateLabel: stateResult.stateLabel,
     totalAnnualTax: totalAnnualTax.toFixed(2),
     quarterlyPayment: quarterlyPayment.toFixed(2),
     dueDates,
