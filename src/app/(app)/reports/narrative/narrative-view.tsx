@@ -106,10 +106,10 @@ function PnlTable({ pnl, title }: { pnl: PnlData; title: string }) {
 
 export function NarrativeView() {
   const now = new Date();
-  const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+  const yearStart = `${now.getFullYear()}-01-01`;
   const today = now.toISOString().split("T")[0];
 
-  const [startDate, setStartDate] = useState(monthStart);
+  const [startDate, setStartDate] = useState(yearStart);
   const [endDate, setEndDate] = useState(today);
   const [loading, setLoading] = useState(false);
   const [pnl, setPnl] = useState<PnlData | null>(null);

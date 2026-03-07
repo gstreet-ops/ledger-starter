@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -7,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Users } from "lucide-react";
 
 type PlaidItemSummary = {
   id: string;
@@ -131,6 +133,28 @@ export function SettingsView({
             Update it in your hosting provider&apos;s settings (Vercel → Project
             Settings → Environment Variables).
           </p>
+        </CardContent>
+      </Card>
+
+      {/* Community */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Community
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Share your chart of accounts, rules, and tax mappings with the
+            Ledger Starter community. Compare your setup with others.
+          </p>
+          <Link
+            href="/community"
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            <Users className="h-4 w-4" />
+            Open Community
+          </Link>
         </CardContent>
       </Card>
 

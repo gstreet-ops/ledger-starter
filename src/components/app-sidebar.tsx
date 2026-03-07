@@ -19,7 +19,6 @@ import {
   LogOut,
   FileUp,
   HelpCircle,
-  Users,
   Rocket,
   ArrowLeft,
 } from "lucide-react";
@@ -46,7 +45,6 @@ const navItems = [
   { title: "Tax", href: "/tax", icon: Calculator },
   { title: "Quarterly Estimates", href: "/tax/quarterly", icon: CalendarClock },
   { title: "Rules", href: "/rules", icon: ListChecks },
-  { title: "Community", href: "/community", icon: Users },
   { title: "Narrative", href: "/reports/narrative", icon: MessageSquareText },
   { title: "Settings", href: "/settings", icon: Settings },
 ];
@@ -76,7 +74,7 @@ export function AppSidebar({ hasUnsharedChanges, isDemo: isDemoUser = false }: A
         {isDemoUser && (
           <Link href="/" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1">
             <ArrowLeft className="h-3 w-3" />
-            Back to Ledger Starter
+            Ledger Starter Home
           </Link>
         )}
         <h1 className="text-lg font-semibold">Ledger Starter</h1>
@@ -89,7 +87,7 @@ export function AppSidebar({ hasUnsharedChanges, isDemo: isDemoUser = false }: A
                 <Link href={item.href}>
                   <item.icon className="mr-2 h-4 w-4" />
                   <span>{item.title}</span>
-                  {item.href === "/community" && hasUnsharedChanges && (
+                  {item.href === "/settings" && hasUnsharedChanges && (
                     <span className="ml-auto h-2 w-2 rounded-full bg-blue-500" />
                   )}
                 </Link>
