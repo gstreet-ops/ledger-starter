@@ -7,6 +7,8 @@ import {
   getLedgerAccounts,
 } from "@/lib/db/queries";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Info } from "lucide-react";
 import Link from "next/link";
 import { ReviewTable } from "./review-table";
 
@@ -53,6 +55,8 @@ export default async function TransactionReviewPage({
     return `/transactions/review?${p.toString()}`;
   }
 
+  const aiConfigured = !!process.env.ANTHROPIC_API_KEY;
+
   return (
     <div className="space-y-6">
       <div>
@@ -61,6 +65,19 @@ export default async function TransactionReviewPage({
           Review imported bank transactions before posting to the ledger.
         </p>
       </div>
+
+      {!aiConfigured && (
+        <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20">
+          <CardContent className="flex items-center gap-3 py-3">
+            <Info className="h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" />
+            <p className="text-sm">
+              AI categorization is not configured. Add your Anthropic API key in{" "}
+              <Link href="/settings" className="underline font-medium">Settings</Link>{" "}
+              to get intelligent category suggestions. Manual categorization works normally.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2">

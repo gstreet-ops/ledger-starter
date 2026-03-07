@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Info } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -193,13 +195,30 @@ export function NarrativeView() {
               <CardTitle className="text-sm">AI Narrative</CardTitle>
             </CardHeader>
             <CardContent>
-              {narrative ? (
+              {narrative?.includes("require an Anthropic API key") ? (
+                <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20 p-4 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <p className="text-sm font-medium">AI Narratives Not Configured</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {narrative}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    When configured, AI generates plain-English summaries of your P&L, including
+                    trend analysis and period-over-period comparisons.
+                  </p>
+                  <Link href="/settings" className="text-sm underline font-medium">
+                    Go to Settings
+                  </Link>
+                </div>
+              ) : narrative ? (
                 <p className="text-sm whitespace-pre-line leading-relaxed">
                   {narrative}
                 </p>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Narrative unavailable. Ensure ANTHROPIC_API_KEY is configured.
+                  Narrative unavailable.
                 </p>
               )}
             </CardContent>
@@ -250,13 +269,26 @@ export function NarrativeView() {
               <CardTitle className="text-sm">AI Comparison</CardTitle>
             </CardHeader>
             <CardContent>
-              {compResult.comparison ? (
+              {compResult.comparison?.includes("require an Anthropic API key") ? (
+                <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20 p-4 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <p className="text-sm font-medium">AI Comparisons Not Configured</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {compResult.comparison}
+                  </p>
+                  <Link href="/settings" className="text-sm underline font-medium">
+                    Go to Settings
+                  </Link>
+                </div>
+              ) : compResult.comparison ? (
                 <p className="text-sm whitespace-pre-line leading-relaxed">
                   {compResult.comparison}
                 </p>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Comparison unavailable. Ensure ANTHROPIC_API_KEY is configured.
+                  Comparison unavailable.
                 </p>
               )}
             </CardContent>

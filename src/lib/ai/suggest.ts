@@ -36,7 +36,10 @@ export async function suggestCategoriesBatch(
   rows: ImportRowInput[]
 ): Promise<Map<string, AiSuggestion>> {
   const anthropic = getClient();
-  if (!anthropic) return new Map();
+  if (!anthropic) {
+    console.warn("ANTHROPIC_API_KEY not set — AI categorization disabled");
+    return new Map();
+  }
 
   const { accounts, taxCategories } = await getAccountsWithTaxCategories();
 

@@ -104,6 +104,36 @@ export function SettingsView({
         </CardContent>
       </Card>
 
+      {/* AI Features */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            AI Features
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center gap-2">
+            <span
+              className={`h-2.5 w-2.5 rounded-full ${
+                envStatus.anthropicKey ? "bg-green-500" : "bg-gray-400"
+              }`}
+            />
+            <span className="text-sm font-medium">
+              {envStatus.anthropicKey ? "Connected" : "Not configured"}
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            AI powers two features: intelligent transaction categorization and
+            narrative financial reports.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Your API key is set as an environment variable (ANTHROPIC_API_KEY).
+            Update it in your hosting provider&apos;s settings (Vercel → Project
+            Settings → Environment Variables).
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Fiscal Year */}
       <Card>
         <CardHeader className="pb-2">

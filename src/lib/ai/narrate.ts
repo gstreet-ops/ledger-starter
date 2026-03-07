@@ -20,12 +20,18 @@ type PnlData = {
 
 type PeriodLabel = string; // e.g. "January 2026"
 
+const AI_NOT_CONFIGURED_MESSAGE =
+  "AI narrative reports require an Anthropic API key. Add your key in Settings to enable AI-powered financial summaries.";
+
 export async function narratePnL(
   pnlData: PnlData,
   period: PeriodLabel
 ): Promise<string | null> {
   const anthropic = getClient();
-  if (!anthropic) return null;
+  if (!anthropic) {
+    console.warn("ANTHROPIC_API_KEY not set — AI narrative disabled");
+    return AI_NOT_CONFIGURED_MESSAGE;
+  }
 
   const incomeLines = pnlData.income
     .map((a) => `  ${a.name}: $${a.balance}`)
@@ -121,7 +127,10 @@ export async function periodComparison(
   previousPeriod: { label: string; data: PnlData }
 ): Promise<string | null> {
   const anthropic = getClient();
-  if (!anthropic) return null;
+  if (!anthropic) {
+    console.warn("ANTHROPIC_API_KEY not set — AI narrative disabled");
+    return AI_NOT_CONFIGURED_MESSAGE;
+  }
 
   function summarizePnl(label: string, data: PnlData) {
     const income = data.income
