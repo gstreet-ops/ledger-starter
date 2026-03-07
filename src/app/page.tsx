@@ -6,6 +6,9 @@ import {
   Sparkles,
   Rocket,
   ArrowRight,
+  Briefcase,
+  Car,
+  Dice5,
 } from "lucide-react";
 
 const DEPLOY_URL =
@@ -60,6 +63,33 @@ const steps = [
   },
 ];
 
+const demoProfiles = [
+  {
+    id: "acme-consulting",
+    icon: Briefcase,
+    title: "Acme Consulting",
+    subtitle: "TX — Services",
+    description: "Consulting retainers, software & travel expenses",
+    accent: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400",
+  },
+  {
+    id: "car-wash",
+    icon: Car,
+    title: "Sparkling Car Wash",
+    subtitle: "FL — Mobile Service",
+    description: "Fleet contracts, fuel & supply costs, no state tax",
+    accent: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400",
+  },
+  {
+    id: "board-games",
+    icon: Dice5,
+    title: "Pixel & Dice",
+    subtitle: "WA — E-commerce",
+    description: "Shopify + Amazon sales, COGS, shipping & warehouse",
+    accent: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-400",
+  },
+];
+
 const techStack = [
   "Next.js 15",
   "Supabase",
@@ -87,13 +117,6 @@ export default function LandingPage() {
             Double-entry ledger, bank sync, Schedule C support, AI categorization.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4 flex-wrap">
-            <Link
-              href="/demo"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 shadow-sm"
-            >
-              Try the Demo
-              <ArrowRight className="h-4 w-4" />
-            </Link>
             <a
               href={DEPLOY_URL}
               target="_blank"
@@ -103,6 +126,34 @@ export default function LandingPage() {
               <Rocket className="h-4 w-4" />
               Deploy Your Own
             </a>
+          </div>
+
+          {/* Demo Profile Cards */}
+          <div className="mt-12">
+            <p className="text-sm font-medium text-muted-foreground mb-4">Try a demo with sample data</p>
+            <div className="grid gap-4 sm:grid-cols-3 max-w-3xl mx-auto">
+              {demoProfiles.map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/demo?profile=${p.id}`}
+                  className="group rounded-xl border bg-card p-4 text-left space-y-2 hover:border-primary/50 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${p.accent}`}>
+                      <p.icon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-sm">{p.title}</div>
+                      <div className="text-xs text-muted-foreground">{p.subtitle}</div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{p.description}</p>
+                  <div className="flex items-center gap-1 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                    Try this demo <ArrowRight className="h-3 w-3" />
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

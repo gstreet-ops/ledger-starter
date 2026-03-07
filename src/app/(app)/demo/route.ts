@@ -1,9 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { purgeDemoData, seedDemoData } from "@/lib/services/demo-seed";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const demoEmail = process.env.DEMO_EMAIL;
   const demoPassword = process.env.DEMO_PASSWORD;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -16,6 +17,9 @@ export async function GET() {
       has: { demoEmail: !!demoEmail, demoPassword: !!demoPassword, supabaseUrl: !!supabaseUrl, supabaseAnonKey: !!supabaseAnonKey }
     }, { status: 503 });
   }
+
+  // Read profile from query param (default: acme-consulting)
+  const profileId = request.nextUrl.searchParams.get("profile") || "acme-consulting";
 
   // Build the redirect response FIRST so cookies attach to it
   const redirectResponse = NextResponse.redirect(new URL("/dashboard", siteUrl));
@@ -42,6 +46,14 @@ export async function GET() {
 
   if (error) {
     return NextResponse.json({ error: "Auth failed", detail: error.message }, { status: 500 });
+  }
+
+  // Seed the selected profile
+  try {
+    await purgeDemoData();
+    await seedDemoData(profileId);
+  } catch (err) {
+    console.error("Demo seed error:", err);
   }
 
   return redirectResponse;

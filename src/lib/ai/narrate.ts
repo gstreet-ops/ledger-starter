@@ -2,7 +2,19 @@ import Anthropic from "@anthropic-ai/sdk";
 import { getUserSettings } from "@/lib/db/queries";
 import { STATE_TAX_RATES } from "@/lib/services/tax";
 import { isCurrentUserDemo } from "./demo-check";
-import { DEMO_NARRATIVE, DEMO_COMPARISON } from "./demo-samples";
+import { getDemoSamples } from "./demo-samples";
+import { DEMO_PROFILES } from "@/lib/services/demo-seed";
+
+async function resolveCurrentDemoProfile(): Promise<string> {
+  const settings = await getUserSettings();
+  const name = settings?.businessName;
+  if (name) {
+    for (const p of Object.values(DEMO_PROFILES)) {
+      if (p.businessName === name) return p.id;
+    }
+  }
+  return "acme-consulting";
+}
 
 let client: Anthropic | null = null;
 
@@ -29,7 +41,10 @@ export async function narratePnL(
   pnlData: PnlData,
   period: PeriodLabel
 ): Promise<string | null> {
-  if (await isCurrentUserDemo()) return DEMO_NARRATIVE;
+  if (await isCurrentUserDemo()) {
+    const profileId = await resolveCurrentDemoProfile();
+    return getDemoSamples(profileId).narrative;
+  }
 
   const anthropic = getClient();
   if (!anthropic) {
@@ -130,7 +145,10 @@ export async function periodComparison(
   currentPeriod: { label: string; data: PnlData },
   previousPeriod: { label: string; data: PnlData }
 ): Promise<string | null> {
-  if (await isCurrentUserDemo()) return DEMO_COMPARISON;
+  if (await isCurrentUserDemo()) {
+    const profileId = await resolveCurrentDemoProfile();
+    return getDemoSamples(profileId).comparison;
+  }
 
   const anthropic = getClient();
   if (!anthropic) {
