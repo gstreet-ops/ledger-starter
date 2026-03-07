@@ -45,3 +45,47 @@
 - Removed GA fallback in stateTax — returns "Not configured" for unknown states
 - Renamed ga_form_category column to state_form_category (migration 0005)
 - Updated all references across schema, queries, seed files, and UI
+
+### Community features Phase 1 — 2026-03-07
+- Base manifest (public/base-manifest.json) with 13 tables, 21 routes, 2 integrations
+- Fingerprint collector service (schema shape, integration inventory, diff, hash)
+- /community page with diff cards, fingerprint viewer, sharing toggle
+- Migration 0006: community sharing columns on user_settings
+- Sidebar nav: Community link with Users icon
+
+### Community features Phase 2 — 2026-03-07
+- POST /api/community/share with local storage + optional GitHub Issues posting
+- Migration 0007: community_reports table for local audit trail
+- Share dialog with diff preview, optional description, privacy note
+- Change-based nudge on dashboard (respects snooze, sharing toggle)
+- Blue dot badge on Community sidebar nav when unshared changes exist
+
+### Deploy button + AI degradation — 2026-03-07
+- One-click Deploy to Vercel button in README with Supabase integration
+- README rewritten as concise landing page
+- AI suggest/narrate return friendly messages when ANTHROPIC_API_KEY missing
+- UI indicators on review page, narrative page, and Settings for AI status
+- SETUP.md updated with one-click deploy, optional API keys
+
+## Roadmap
+
+### Near-term
+- [ ] Demo → Deploy experience (landing page, demo banner CTA, sidebar CTA, 2026 demo data)
+- [ ] Auth user creation flow (signup page or public setup wizard for first-run)
+- [ ] UPSTREAM.md tracking file in gstreet-ledger for porting features
+
+### Medium-term
+- [ ] AI proxy trial — limited free AI calls via hosted endpoint, transition to own key
+- [ ] Multi-provider AI abstraction (Anthropic / OpenAI / Google) via user_settings
+- [ ] Community changelog page showing features built by community
+- [ ] Upgrade to Hybrid community tracking (opt-in auto-sync) at 20+ forks
+
+### Long-term
+- [ ] Module/plugin system — UI-based feature activation without code editing
+  - Feature modules (invoicing, recurring transactions, mileage, 1099 tracking)
+  - Pre-built code in repo, activated by feature flags in user_settings
+  - /settings/modules page to browse and toggle modules
+  - Auto-run migrations when modules are activated
+  - Similar pattern to Hallaron/trivia platform admin interfaces
+- [ ] CLI setup script (npx ledger-starter init)
+- [ ] Custom domain support

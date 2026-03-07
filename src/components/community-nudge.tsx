@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, X } from "lucide-react";
-import { snoozeNudge } from "@/app/community/actions";
+import { snoozeNudge } from "@/app/(app)/community/actions";
 
 type Props = {
   reason: string;

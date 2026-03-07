@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -19,6 +20,7 @@ import {
   FileUp,
   HelpCircle,
   Users,
+  Rocket,
 } from "lucide-react";
 import {
   Sidebar,
@@ -52,9 +54,22 @@ type AppSidebarProps = {
   hasUnsharedChanges?: boolean;
 };
 
+const DEPLOY_URL =
+  "https://vercel.com/new/clone?repository-url=https://github.com/gstreet-ops/ledger-starter&project-name=my-ledger&integration-ids=oac_jUduyjQgOyzev1fjrW83NYOv&env=PLAID_CLIENT_ID,PLAID_SECRET,PLAID_ENV,PLAID_TOKEN_ENCRYPTION_KEY,ANTHROPIC_API_KEY&envDescription=Plaid%20and%20Anthropic%20are%20optional.%20Supabase%20env%20vars%20are%20set%20automatically%20by%20the%20integration.&envLink=https://github.com/gstreet-ops/ledger-starter/blob/main/SETUP.md";
+
 export function AppSidebar({ hasUnsharedChanges }: AppSidebarProps = {}) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isDemoUser, setIsDemoUser] = useState(false);
+
+  useEffect(() => {
+    const demoEmail = process.env.NEXT_PUBLIC_DEMO_EMAIL;
+    if (!demoEmail) return;
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email === demoEmail) setIsDemoUser(true);
+    });
+  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -102,6 +117,22 @@ export function AppSidebar({ hasUnsharedChanges }: AppSidebarProps = {}) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        {isDemoUser && (
+          <div className="mx-2 mt-3 rounded-lg bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 p-3">
+            <p className="text-xs font-medium text-indigo-900 dark:text-indigo-200">
+              Like what you see?
+            </p>
+            <a
+              href={DEPLOY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex items-center justify-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700"
+            >
+              <Rocket className="h-3 w-3" />
+              Deploy Your Own
+            </a>
+          </div>
+        )}
       </SidebarFooter>
     </Sidebar>
   );

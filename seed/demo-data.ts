@@ -36,38 +36,38 @@ async function main() {
 
   const demos: Array<{ date: Date; description: string; amount: number; debit: string; credit: string; category: string }> = [
     // Income
-    { date: new Date("2024-01-15"), description: "Acme Invoice #001 — Website Redesign", amount: 500000, debit: checking, credit: revenue, category: "income" },
-    { date: new Date("2024-02-01"), description: "Acme Invoice #002 — SEO Consulting", amount: 250000, debit: checking, credit: revenue, category: "income" },
-    { date: new Date("2024-03-10"), description: "Acme Invoice #003 — Monthly Retainer", amount: 300000, debit: checking, credit: revenue, category: "income" },
-    { date: new Date("2024-04-05"), description: "Acme Invoice #004 — Logo Design", amount: 150000, debit: checking, credit: revenue, category: "income" },
-    { date: new Date("2024-05-20"), description: "Acme Invoice #005 — Monthly Retainer", amount: 300000, debit: checking, credit: revenue, category: "income" },
+    { date: new Date("2026-01-15"), description: "Acme Invoice #001 — Website Redesign", amount: 500000, debit: checking, credit: revenue, category: "income" },
+    { date: new Date("2026-02-01"), description: "Acme Invoice #002 — SEO Consulting", amount: 250000, debit: checking, credit: revenue, category: "income" },
+    { date: new Date("2026-03-10"), description: "Acme Invoice #003 — Monthly Retainer", amount: 300000, debit: checking, credit: revenue, category: "income" },
+    { date: new Date("2026-04-05"), description: "Acme Invoice #004 — Logo Design", amount: 150000, debit: checking, credit: revenue, category: "income" },
+    { date: new Date("2026-05-20"), description: "Acme Invoice #005 — Monthly Retainer", amount: 300000, debit: checking, credit: revenue, category: "income" },
 
     // Software
-    { date: new Date("2024-01-02"), description: "Notion — Annual Plan", amount: 9600, debit: software, credit: checking, category: "expense" },
-    { date: new Date("2024-01-05"), description: "GitHub Copilot — Monthly", amount: 1000, debit: software, credit: checking, category: "expense" },
-    { date: new Date("2024-02-05"), description: "GitHub Copilot — Monthly", amount: 1000, debit: software, credit: checking, category: "expense" },
-    { date: new Date("2024-01-15"), description: "Adobe Creative Cloud — Monthly", amount: 5500, debit: software, credit: checking, category: "expense" },
-    { date: new Date("2024-02-15"), description: "Adobe Creative Cloud — Monthly", amount: 5500, debit: software, credit: checking, category: "expense" },
-    { date: new Date("2024-03-01"), description: "Figma — Professional Plan", amount: 1500, debit: software, credit: checking, category: "expense" },
+    { date: new Date("2026-01-02"), description: "Notion — Annual Plan", amount: 9600, debit: software, credit: checking, category: "expense" },
+    { date: new Date("2026-01-05"), description: "GitHub Copilot — Monthly", amount: 1000, debit: software, credit: checking, category: "expense" },
+    { date: new Date("2026-02-05"), description: "GitHub Copilot — Monthly", amount: 1000, debit: software, credit: checking, category: "expense" },
+    { date: new Date("2026-01-15"), description: "Adobe Creative Cloud — Monthly", amount: 5500, debit: software, credit: checking, category: "expense" },
+    { date: new Date("2026-02-15"), description: "Adobe Creative Cloud — Monthly", amount: 5500, debit: software, credit: checking, category: "expense" },
+    { date: new Date("2026-03-01"), description: "Figma — Professional Plan", amount: 1500, debit: software, credit: checking, category: "expense" },
 
     // Office
-    { date: new Date("2024-01-20"), description: "Staples — Printer Ink + Paper", amount: 4700, debit: office, credit: checking, category: "expense" },
-    { date: new Date("2024-02-12"), description: "Amazon — External Monitor Stand", amount: 8900, debit: office, credit: checking, category: "expense" },
-    { date: new Date("2024-03-18"), description: "USPS — Client Mailing", amount: 2100, debit: office, credit: checking, category: "expense" },
+    { date: new Date("2026-01-20"), description: "Staples — Printer Ink + Paper", amount: 4700, debit: office, credit: checking, category: "expense" },
+    { date: new Date("2026-02-12"), description: "Amazon — External Monitor Stand", amount: 8900, debit: office, credit: checking, category: "expense" },
+    { date: new Date("2026-03-18"), description: "USPS — Client Mailing", amount: 2100, debit: office, credit: checking, category: "expense" },
 
     // Meals (50% deductible in real life — simplified here)
-    { date: new Date("2024-01-25"), description: "The Capital Grille — Client Dinner (Jane + client)", amount: 18500, debit: meals, credit: checking, category: "expense" },
-    { date: new Date("2024-02-14"), description: "Starbucks — Client Meeting Coffee", amount: 2400, debit: meals, credit: checking, category: "expense" },
-    { date: new Date("2024-03-22"), description: "Flores Restaurant — Team Lunch", amount: 6700, debit: meals, credit: checking, category: "expense" },
+    { date: new Date("2026-01-25"), description: "The Capital Grille — Client Dinner (Jane + client)", amount: 18500, debit: meals, credit: checking, category: "expense" },
+    { date: new Date("2026-02-14"), description: "Starbucks — Client Meeting Coffee", amount: 2400, debit: meals, credit: checking, category: "expense" },
+    { date: new Date("2026-03-22"), description: "Flores Restaurant — Team Lunch", amount: 6700, debit: meals, credit: checking, category: "expense" },
 
     // Travel
-    { date: new Date("2024-02-20"), description: "Southwest Airlines — Austin → Chicago (client visit)", amount: 42000, debit: travel, credit: checking, category: "expense" },
-    { date: new Date("2024-02-21"), description: "Hilton Chicago — 2 nights", amount: 38000, debit: travel, credit: checking, category: "expense" },
-    { date: new Date("2024-02-22"), description: "Uber — Airport to Hotel", amount: 3200, debit: travel, credit: checking, category: "expense" },
+    { date: new Date("2026-02-20"), description: "Southwest Airlines — Austin → Chicago (client visit)", amount: 42000, debit: travel, credit: checking, category: "expense" },
+    { date: new Date("2026-02-21"), description: "Hilton Chicago — 2 nights", amount: 38000, debit: travel, credit: checking, category: "expense" },
+    { date: new Date("2026-02-22"), description: "Uber — Airport to Hotel", amount: 3200, debit: travel, credit: checking, category: "expense" },
 
     // Marketing
-    { date: new Date("2024-03-05"), description: "Meta Ads — February Campaign", amount: 15000, debit: marketing, credit: checking, category: "expense" },
-    { date: new Date("2024-04-01"), description: "Canva Pro — Annual", amount: 14900, debit: marketing, credit: checking, category: "expense" },
+    { date: new Date("2026-03-05"), description: "Meta Ads — February Campaign", amount: 15000, debit: marketing, credit: checking, category: "expense" },
+    { date: new Date("2026-04-01"), description: "Canva Pro — Annual", amount: 14900, debit: marketing, credit: checking, category: "expense" },
   ];
 
   let created = 0;

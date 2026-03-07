@@ -8,6 +8,7 @@ export async function middleware(request: NextRequest) {
 
   // Allow public paths and static assets
   if (
+    pathname === "/" ||
     publicPaths.some((p) => pathname.startsWith(p)) ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
