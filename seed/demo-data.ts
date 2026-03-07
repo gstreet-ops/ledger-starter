@@ -78,6 +78,7 @@ async function main() {
       date: d.date,
       description: d.description,
       memo: DEMO_TAG,
+      status: "posted",
     });
     await db.insert(transactionLines).values([
       { transactionId: txId, accountId: d.debit,  debit: String(d.amount / 100), credit: "0.00" },

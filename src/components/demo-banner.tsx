@@ -1,24 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 const DEPLOY_URL =
   "https://vercel.com/new/clone?repository-url=https://github.com/gstreet-ops/ledger-starter&project-name=my-ledger&integration-ids=oac_jUduyjQgOyzev1fjrW83NYOv&env=PLAID_CLIENT_ID,PLAID_SECRET,PLAID_ENV,PLAID_TOKEN_ENCRYPTION_KEY,ANTHROPIC_API_KEY&envDescription=Plaid%20and%20Anthropic%20are%20optional.%20Supabase%20env%20vars%20are%20set%20automatically%20by%20the%20integration.&envLink=https://github.com/gstreet-ops/ledger-starter/blob/main/SETUP.md";
 
-export function DemoBanner() {
-  const [isDemo, setIsDemo] = useState(false);
+export function DemoBanner({ isDemo = false }: { isDemo?: boolean }) {
   const [dismissed, setDismissed] = useState(false);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email === process.env.NEXT_PUBLIC_DEMO_EMAIL) {
-        setIsDemo(true);
-      }
-    });
-  }, []);
 
   if (!isDemo || dismissed) return null;
 

@@ -17,24 +17,28 @@ const features = [
     title: "Double-Entry Accounting",
     description:
       "Balanced debits and credits, chart of accounts, full audit trail. Every transaction is correct by construction.",
+    accent: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400",
   },
   {
     icon: Landmark,
     title: "Bank Sync",
     description:
       "Connect your bank accounts via Plaid, or import CSV/PDF statements from AmEx, Citi, and Truist.",
+    accent: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400",
   },
   {
     icon: Calculator,
     title: "Tax Ready",
     description:
       "Schedule C summary, state tax estimates, quarterly payment tracking, and CPA export — all from your data.",
+    accent: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400",
   },
   {
     icon: Sparkles,
     title: "AI-Powered",
     description:
       "Claude suggests account categories and writes plain-English financial summaries. You always approve.",
+    accent: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-400",
   },
 ];
 
@@ -70,31 +74,36 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <div className="mx-auto max-w-4xl px-6 pt-24 pb-16 text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          Ledger Starter
-        </h1>
-        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Open-source accounting &amp; tax tool for US small businesses.
-          Double-entry ledger, bank sync, Schedule C support, AI categorization.
-        </p>
-        <div className="mt-8 flex items-center justify-center gap-4 flex-wrap">
-          <Link
-            href="/demo"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Try the Demo
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <a
-            href={DEPLOY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border px-6 py-3 text-sm font-medium hover:bg-muted"
-          >
-            <Rocket className="h-4 w-4" />
-            Deploy Your Own
-          </a>
+      <div className="bg-gradient-to-b from-slate-50 to-background dark:from-slate-950 dark:to-background">
+        <div className="mx-auto max-w-4xl px-6 pt-24 pb-20 text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+            <BookOpen className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            Ledger Starter
+          </h1>
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            Open-source accounting &amp; tax tool for US small businesses.
+            Double-entry ledger, bank sync, Schedule C support, AI categorization.
+          </p>
+          <div className="mt-10 flex items-center justify-center gap-4 flex-wrap">
+            <Link
+              href="/demo"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 shadow-sm"
+            >
+              Try the Demo
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href={DEPLOY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-3 text-sm font-medium text-white hover:from-indigo-700 hover:to-violet-700 shadow-sm"
+            >
+              <Rocket className="h-4 w-4" />
+              Deploy Your Own
+            </a>
+          </div>
         </div>
       </div>
 
@@ -107,8 +116,8 @@ export default function LandingPage() {
               className="rounded-xl border bg-card p-6 space-y-3"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <f.icon className="h-5 w-5 text-primary" />
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${f.accent}`}>
+                  <f.icon className="h-5 w-5" />
                 </div>
                 <h3 className="font-semibold">{f.title}</h3>
               </div>
@@ -126,7 +135,7 @@ export default function LandingPage() {
         <div className="grid gap-8 sm:grid-cols-3">
           {steps.map((s) => (
             <div key={s.num} className="text-center space-y-3">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold shadow-sm">
                 {s.num}
               </div>
               <h3 className="font-semibold">{s.title}</h3>

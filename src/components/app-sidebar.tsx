@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -21,6 +21,7 @@ import {
   HelpCircle,
   Users,
   Rocket,
+  ArrowLeft,
 } from "lucide-react";
 import {
   Sidebar,
@@ -52,24 +53,15 @@ const navItems = [
 
 type AppSidebarProps = {
   hasUnsharedChanges?: boolean;
+  isDemo?: boolean;
 };
 
 const DEPLOY_URL =
   "https://vercel.com/new/clone?repository-url=https://github.com/gstreet-ops/ledger-starter&project-name=my-ledger&integration-ids=oac_jUduyjQgOyzev1fjrW83NYOv&env=PLAID_CLIENT_ID,PLAID_SECRET,PLAID_ENV,PLAID_TOKEN_ENCRYPTION_KEY,ANTHROPIC_API_KEY&envDescription=Plaid%20and%20Anthropic%20are%20optional.%20Supabase%20env%20vars%20are%20set%20automatically%20by%20the%20integration.&envLink=https://github.com/gstreet-ops/ledger-starter/blob/main/SETUP.md";
 
-export function AppSidebar({ hasUnsharedChanges }: AppSidebarProps = {}) {
+export function AppSidebar({ hasUnsharedChanges, isDemo: isDemoUser = false }: AppSidebarProps = {}) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isDemoUser, setIsDemoUser] = useState(false);
-
-  useEffect(() => {
-    const demoEmail = process.env.NEXT_PUBLIC_DEMO_EMAIL;
-    if (!demoEmail) return;
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email === demoEmail) setIsDemoUser(true);
-    });
-  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -81,6 +73,12 @@ export function AppSidebar({ hasUnsharedChanges }: AppSidebarProps = {}) {
   return (
     <Sidebar>
       <SidebarHeader className="border-b px-4 py-3">
+        {isDemoUser && (
+          <Link href="/" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1">
+            <ArrowLeft className="h-3 w-3" />
+            Back to Ledger Starter
+          </Link>
+        )}
         <h1 className="text-lg font-semibold">Ledger Starter</h1>
       </SidebarHeader>
       <SidebarContent>
