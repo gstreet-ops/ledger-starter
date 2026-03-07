@@ -1,6 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { getUserSettings } from "@/lib/db/queries";
 import { STATE_TAX_RATES } from "@/lib/services/tax";
+import { isCurrentUserDemo } from "./demo-check";
+import { DEMO_NARRATIVE, DEMO_COMPARISON } from "./demo-samples";
 
 let client: Anthropic | null = null;
 
@@ -27,6 +29,8 @@ export async function narratePnL(
   pnlData: PnlData,
   period: PeriodLabel
 ): Promise<string | null> {
+  if (await isCurrentUserDemo()) return DEMO_NARRATIVE;
+
   const anthropic = getClient();
   if (!anthropic) {
     console.warn("ANTHROPIC_API_KEY not set — AI narrative disabled");
@@ -126,6 +130,8 @@ export async function periodComparison(
   currentPeriod: { label: string; data: PnlData },
   previousPeriod: { label: string; data: PnlData }
 ): Promise<string | null> {
+  if (await isCurrentUserDemo()) return DEMO_COMPARISON;
+
   const anthropic = getClient();
   if (!anthropic) {
     console.warn("ANTHROPIC_API_KEY not set — AI narrative disabled");

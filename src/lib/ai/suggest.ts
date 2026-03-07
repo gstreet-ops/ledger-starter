@@ -1,6 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { getAccountsWithTaxCategories, getUserSettings } from "@/lib/db/queries";
 import { STATE_TAX_RATES } from "@/lib/services/tax";
+import { isCurrentUserDemo } from "./demo-check";
+import { getDemoSuggestion } from "./demo-suggestions";
 
 type ImportRowInput = {
   id: string;
@@ -35,6 +37,18 @@ export async function suggestCategory(
 export async function suggestCategoriesBatch(
   rows: ImportRowInput[]
 ): Promise<Map<string, AiSuggestion>> {
+  // Demo user: return pre-built suggestions
+  if (await isCurrentUserDemo()) {
+    const { accounts } = await getAccountsWithTaxCategories();
+    const idsByCode = new Map(accounts.map((a) => [a.code, a.id]));
+    const results = new Map<string, AiSuggestion>();
+    for (const row of rows) {
+      const suggestion = getDemoSuggestion(row.name, idsByCode);
+      if (suggestion) results.set(row.id, suggestion);
+    }
+    return results;
+  }
+
   const anthropic = getClient();
   if (!anthropic) {
     console.warn("ANTHROPIC_API_KEY not set — AI categorization disabled");
