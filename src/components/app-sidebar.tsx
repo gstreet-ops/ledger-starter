@@ -20,6 +20,7 @@ import {
   FileUp,
   HelpCircle,
   Rocket,
+  Map,
   ArrowLeft,
 } from "lucide-react";
 import {
@@ -46,6 +47,7 @@ const navItems = [
   { title: "Quarterly Estimates", href: "/tax/quarterly", icon: CalendarClock },
   { title: "Rules", href: "/rules", icon: ListChecks },
   { title: "Narrative", href: "/reports/narrative", icon: MessageSquareText },
+  { title: "Roadmap", href: "/roadmap", icon: Map },
   { title: "Settings", href: "/settings", icon: Settings },
 ];
 
