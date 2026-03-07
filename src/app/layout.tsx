@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GStreet Ledger",
-  description: "Personal accounting and tax tool for a single-member LLC",
+  title: "Ledger Starter",
+  description: "Open-source accounting and tax tool for US small businesses",
 };
 
 export default function RootLayout({

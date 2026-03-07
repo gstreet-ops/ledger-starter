@@ -41,7 +41,7 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="w-full max-w-sm space-y-4 rounded-lg border p-6"
       >
-        <h1 className="text-xl font-semibold">GStreet Ledger</h1>
+        <h1 className="text-xl font-semibold">Ledger Starter</h1>
         <p className="text-sm text-muted-foreground">
           Sign in to continue
         </p>
