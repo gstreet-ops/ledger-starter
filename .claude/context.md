@@ -5,11 +5,14 @@
 
 ## Current State
 - **Active branch**: main
-- **Last deployment**: not yet deployed
+- **Last deployment**: 2026-03-07 — https://ledger-starter.vercel.app (auto-deploys on push)
 - **Supabase project**: fmbfoqmlkozxdmruncho
 - **Plaid**: {PLAID_ACCOUNT_EMAIL} — set after creating your Plaid developer account
-- **Phase**: Fork cleanup complete — independent from gstreet-ledger
-- **Note**: This project has its own Supabase (fmbfoqmlkozxdmruncho) and Vercel project
+- **Phase**: Deployed and demo-ready. Landing page + demo + deploy button all live.
+- **Note**: This project has its own Supabase (fmbfoqmlkozxdmruncho) and Vercel project (prj_Dl5mFHGYHIBM95j9MNYTP52GdW4k)
+- **Migrations applied**: 0000-0007 (7 total)
+- **Demo**: demo@ledger-starter.app / Acme Consulting LLC / TX / 22 posted transactions (Jan-May 2026)
+- **Git author**: Brian <brian@globestreet.com>
 
 ## Setup Status
 - [ ] `.env.local` filled in from `.env.local.example`
@@ -61,18 +64,45 @@
 - Blue dot badge on Community sidebar nav when unshared changes exist
 
 ### Deploy button + AI degradation — 2026-03-07
-- One-click Deploy to Vercel button in README with Supabase integration
+- One-click Deploy to Vercel button in README with Supabase integration (oac_jUduyjQgOyzev1fjrW83NYOv)
 - README rewritten as concise landing page
 - AI suggest/narrate return friendly messages when ANTHROPIC_API_KEY missing
 - UI indicators on review page, narrative page, and Settings for AI status
 - SETUP.md updated with one-click deploy, optional API keys
 
+### Demo → Deploy experience — 2026-03-07
+- Public landing page at / with hero, feature cards, how-it-works, deploy buttons
+- Restructured app into (app) route group so landing page renders without sidebar
+- Demo banner (amber) with "Deploy Your Own" and "View on GitHub" buttons
+- Sidebar "Like what you see?" CTA card for demo users only
+- "← Back to Ledger Starter" link at top of sidebar for demo users
+- Updated demo data to 2026 dates, status "posted" for YTD metrics
+- Re-seeded live Supabase DB with 22 transactions (Jan-May 2026)
+- Demo user detection moved server-side (layout passes isDemo prop)
+- Middleware updated to allow public access to landing page
+- Vercel env vars verified: NEXT_PUBLIC_DEMO_EMAIL, DEMO_EMAIL, DEMO_PASSWORD, NEXT_PUBLIC_SITE_URL
+
+### Architecture decisions recorded — 2026-03-07
+- Community feature tracking: Manual Share with Gentle Nudges (C3b+)
+  - "My Instance" comparison page, manual share button, change-based nudges
+  - Phased: now=manual share, 10-20 forks=nudges+changelog, 50+=hybrid auto-sync
+  - Formal decision artifact saved as project file (community-feature-tracking-decision.jsx)
+- Install experience: One-click Vercel deploy with Supabase Marketplace integration
+- AI strategy: graceful degradation now, multi-provider abstraction later, proxy trial eventually
+
+### Skills created — 2026-03-07
+- /pc (pros-cons): Progressive comparison — table → go deeper → formalize (/pc!)
+- /cc (context-check): Monitor and update project context across sessions
+- Both saved at C:\Users\brian\projects\skills\
+
 ## Roadmap
 
 ### Near-term
-- [ ] Demo → Deploy experience (landing page, demo banner CTA, sidebar CTA, 2026 demo data)
+- [x] Demo → Deploy experience (landing page, demo banner CTA, sidebar CTA, 2026 demo data) ✅
+- [ ] Final demo polish: rename back link, move Community under Settings, fix narrative date defaults
 - [ ] Auth user creation flow (signup page or public setup wizard for first-run)
 - [ ] UPSTREAM.md tracking file in gstreet-ledger for porting features
+- [ ] Supabase project renamed to "GST Books" in dashboard (display only)
 
 ### Medium-term
 - [ ] AI proxy trial — limited free AI calls via hosted endpoint, transition to own key
