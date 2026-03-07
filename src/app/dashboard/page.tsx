@@ -8,7 +8,9 @@ import {
   stateTax,
 } from "@/lib/services/tax";
 import { nextQuarterlyPayment } from "@/lib/services/quarterly-estimates";
+import { checkNudge } from "@/lib/services/fingerprint";
 import { DashboardContent } from "./dashboard-content";
+import { CommunityNudge } from "@/components/community-nudge";
 import { parseMoney } from "@/lib/utils/money";
 
 export default async function DashboardPage() {
@@ -87,7 +89,15 @@ export default async function DashboardPage() {
   const effectiveTaxRate =
     netProfit > 0 ? ((totalTax / netProfit) * 100).toFixed(1) : null;
 
+  const nudge = await checkNudge();
+
   return (
+    <>
+    {nudge.shouldNudge && nudge.reason && (
+      <div className="mb-4">
+        <CommunityNudge reason={nudge.reason} />
+      </div>
+    )}
     <DashboardContent
       ytdRevenue={pnl.totalIncome}
       ytdExpenses={pnl.totalExpenses}
@@ -101,5 +111,6 @@ export default async function DashboardPage() {
       cashRunwayMonths={cashRunwayMonths}
       effectiveTaxRate={effectiveTaxRate}
     />
+    </>
   );
 }

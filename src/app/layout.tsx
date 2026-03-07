@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { CommandPalette } from "@/components/command-palette";
 import { DemoBanner } from "@/components/demo-banner";
+import { checkNudge } from "@/lib/services/fingerprint";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,11 +23,19 @@ export const metadata: Metadata = {
   description: "Open-source accounting and tax tool for US small businesses",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let hasUnsharedChanges = false;
+  try {
+    const nudge = await checkNudge();
+    hasUnsharedChanges = nudge.shouldNudge;
+  } catch {
+    // Nudge check may fail before setup — ignore
+  }
+
   return (
     <html lang="en">
       <body
@@ -34,7 +43,7 @@ export default function RootLayout({
       >
         <TooltipProvider>
           <SidebarProvider>
-            <AppSidebar />
+            <AppSidebar hasUnsharedChanges={hasUnsharedChanges} />
             <CommandPalette />
             <main className="flex-1 overflow-auto">
               <DemoBanner />

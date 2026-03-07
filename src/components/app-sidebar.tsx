@@ -48,7 +48,11 @@ const navItems = [
   { title: "Settings", href: "/settings", icon: Settings },
 ];
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  hasUnsharedChanges?: boolean;
+};
+
+export function AppSidebar({ hasUnsharedChanges }: AppSidebarProps = {}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -72,6 +76,9 @@ export function AppSidebar() {
                 <Link href={item.href}>
                   <item.icon className="mr-2 h-4 w-4" />
                   <span>{item.title}</span>
+                  {item.href === "/community" && hasUnsharedChanges && (
+                    <span className="ml-auto h-2 w-2 rounded-full bg-blue-500" />
+                  )}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

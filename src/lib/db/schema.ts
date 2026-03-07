@@ -329,3 +329,14 @@ export const userSettings = pgTable("user_settings", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Community Reports — local audit trail of shared fingerprints
+export const communityReports = pgTable("community_reports", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fingerprint: jsonb("fingerprint").notNull(),
+  diff: jsonb("diff").notNull(),
+  description: text("description"),
+  baseVersion: text("base_version").notNull(),
+  fingerprintHash: text("fingerprint_hash").notNull(),
+  submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
+});

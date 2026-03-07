@@ -11,11 +11,19 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronRight, Database, Puzzle, Plug, Eye, Share2 } from "lucide-react";
+import { ChevronRight, Database, Puzzle, Plug, Eye, Share2, Loader2 } from "lucide-react";
 import { toggleCommunitySharing } from "./actions";
 import type { InstanceFingerprint, InstanceDiff } from "@/lib/services/fingerprint";
 
@@ -36,7 +44,40 @@ export function CommunityView({
 }: Props) {
   const [sharingEnabled, setSharingEnabled] = useState(communitySharingEnabled);
   const [fingerprintOpen, setFingerprintOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [sharing, setSharing] = useState(false);
+  const [shareResult, setShareResult] = useState<{ success: boolean; summary?: string; sharedToGithub?: boolean } | null>(null);
+  const [lastShared, setLastShared] = useState(lastSharedAt);
   const hasChanges = diff.summary.hasChanges;
+
+  async function handleShare() {
+    setSharing(true);
+    setShareResult(null);
+    try {
+      const res = await fetch("/api/community/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fingerprint,
+          diff,
+          description: description.trim() || undefined,
+          version: "1.0.0",
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setShareResult({ success: true, summary: data.summary, sharedToGithub: data.sharedToGithub });
+        setLastShared(new Date().toISOString());
+      } else {
+        setShareResult({ success: false });
+      }
+    } catch {
+      setShareResult({ success: false });
+    } finally {
+      setSharing(false);
+    }
+  }
 
   async function handleToggleSharing() {
     const newValue = !sharingEnabled;
@@ -237,9 +278,9 @@ export function CommunityView({
             </span>
           </div>
 
-          {lastSharedAt && (
+          {lastShared && (
             <p className="text-xs text-muted-foreground">
-              Last shared: {new Date(lastSharedAt).toLocaleDateString("en-US", {
+              Last shared: {new Date(lastShared).toLocaleDateString("en-US", {
                 month: "long",
                 day: "numeric",
                 year: "numeric",
@@ -247,9 +288,80 @@ export function CommunityView({
             </p>
           )}
 
-          <Button disabled className="w-full">
-            Coming Soon
+          <Button
+            className="w-full"
+            disabled={!sharingEnabled}
+            onClick={() => { setShareResult(null); setDescription(""); setShareDialogOpen(true); }}
+          >
+            <Share2 className="mr-2 h-4 w-4" />
+            Share with Community
           </Button>
+
+          <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Share Your Instance Fingerprint</DialogTitle>
+                <DialogDescription>
+                  Share your structural customizations with the Ledger Starter community.
+                </DialogDescription>
+              </DialogHeader>
+
+              {shareResult?.success ? (
+                <div className="space-y-3 py-2">
+                  <p className="text-sm text-green-600 font-medium">Shared successfully!</p>
+                  <p className="text-xs text-muted-foreground">
+                    Summary: {shareResult.summary}
+                    {shareResult.sharedToGithub && " (posted to GitHub)"}
+                  </p>
+                  <DialogFooter>
+                    <Button onClick={() => setShareDialogOpen(false)}>Done</Button>
+                  </DialogFooter>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium mb-2">What will be shared:</p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      {diff.newTables.length > 0 && <li>{diff.newTables.length} new table{diff.newTables.length > 1 ? "s" : ""}</li>}
+                      {diff.modifiedTables.length > 0 && <li>{diff.modifiedTables.length} modified table{diff.modifiedTables.length > 1 ? "s" : ""}</li>}
+                      {diff.newIntegrations.length > 0 && <li>{diff.newIntegrations.length} new integration{diff.newIntegrations.length > 1 ? "s" : ""}</li>}
+                      {!hasChanges && <li>No structural changes from base template</li>}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <label htmlFor="share-description" className="text-sm font-medium">
+                      Describe what you built (optional)
+                    </label>
+                    <textarea
+                      id="share-description"
+                      className="mt-1.5 w-full rounded-md border bg-background px-3 py-2 text-sm min-h-[80px] resize-none"
+                      placeholder="e.g. Added inventory tracking tables and Stripe integration..."
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    Only structural metadata (table names, column names, integration names) is
+                    shared. No financial data, transactions, or personal information is ever included.
+                  </p>
+
+                  {shareResult?.success === false && (
+                    <p className="text-xs text-red-500">Failed to share. Please try again.</p>
+                  )}
+
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setShareDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={handleShare} disabled={sharing}>
+                      {sharing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {sharing ? "Sharing..." : "Share"}
+                    </Button>
+                  </DialogFooter>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </div>

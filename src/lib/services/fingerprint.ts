@@ -135,6 +135,47 @@ export function computeDiff(
   };
 }
 
+export interface NudgeCheck {
+  shouldNudge: boolean;
+  reason?: string;
+}
+
+export async function checkNudge(): Promise<NudgeCheck> {
+  const { userSettings: userSettingsTable } = await import("@/lib/db/schema");
+
+  const [settings] = await db.select().from(userSettingsTable).limit(1);
+  if (!settings) return { shouldNudge: false };
+  if (!settings.communitySharingEnabled) return { shouldNudge: false };
+
+  // Snoozed?
+  if (settings.nudgeSnoozedUntil && new Date(settings.nudgeSnoozedUntil) > new Date()) {
+    return { shouldNudge: false };
+  }
+
+  // Get current fingerprint hash
+  const fingerprint = await getCurrentFingerprint();
+  const currentHash = hashFingerprint(fingerprint);
+
+  // Compare to last shared
+  const lastSharedFp = settings.lastSharedFingerprint as InstanceFingerprint | null;
+  if (!lastSharedFp) {
+    // Never shared — nudge if there are changes from base
+    const base = await getBaseManifest();
+    const diff = computeDiff(fingerprint, base);
+    if (diff.summary.hasChanges) {
+      return { shouldNudge: true, reason: "You haven't shared your instance yet" };
+    }
+    return { shouldNudge: false };
+  }
+
+  const lastHash = hashFingerprint(lastSharedFp);
+  if (currentHash !== lastHash) {
+    return { shouldNudge: true, reason: "Your instance has changed since you last shared" };
+  }
+
+  return { shouldNudge: false };
+}
+
 export function hashFingerprint(fingerprint: InstanceFingerprint): string {
   const data = JSON.stringify({
     schema: fingerprint.schema,
