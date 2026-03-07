@@ -1,4 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { getUserSettings } from "@/lib/db/queries";
+import { STATE_TAX_RATES } from "@/lib/services/tax";
 
 let client: Anthropic | null = null;
 
@@ -32,11 +34,15 @@ export async function narratePnL(
     .map((a) => `  ${a.name}: $${a.balance}`)
     .join("\n");
 
+  const settings = await getUserSettings();
+  const stateCode = settings?.state ?? "XX";
+  const stateLabel = STATE_TAX_RATES[stateCode]?.label ?? stateCode;
+
   try {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1024,
-      system: `You are a financial advisor for a US single-member LLC (Schedule C filer, Georgia).
+      system: `You are a financial advisor for a US single-member LLC (Schedule C filer, ${stateLabel}).
 Write a concise, plain-English narrative summary of the given P&L data.
 Highlight key drivers of revenue and expenses, notable trends, and anything the business owner should pay attention to.
 Keep it to 2-3 short paragraphs. Use dollar amounts. Do not use markdown headers.`,
@@ -132,11 +138,15 @@ ${expenses || "  (none)"}
   Net Profit: $${data.netProfit}`;
   }
 
+  const settings = await getUserSettings();
+  const stateCode = settings?.state ?? "XX";
+  const stateLabel = STATE_TAX_RATES[stateCode]?.label ?? stateCode;
+
   try {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1024,
-      system: `You are a financial advisor for a US single-member LLC (Schedule C filer, Georgia).
+      system: `You are a financial advisor for a US single-member LLC (Schedule C filer, ${stateLabel}).
 Compare two periods and highlight significant changes. Note percentage changes for key items.
 Keep it to 2-3 short paragraphs. Use dollar amounts. Do not use markdown headers.`,
       messages: [

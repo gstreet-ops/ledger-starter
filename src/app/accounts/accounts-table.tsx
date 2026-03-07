@@ -42,7 +42,7 @@ type Account = {
   name: string;
   type: "asset" | "liability" | "equity" | "income" | "expense";
   scheduleCLine: string | null;
-  gaFormCategory: string | null;
+  stateFormCategory: string | null;
   isActive: boolean;
   totalDebit: string;
   totalCredit: string;
@@ -158,8 +158,8 @@ export function AccountsTable({ accounts }: { accounts: Account[] }) {
                 <Input id="scheduleCLine" name="scheduleCLine" />
               </div>
               <div>
-                <Label htmlFor="gaFormCategory">GA Form Category</Label>
-                <Input id="gaFormCategory" name="gaFormCategory" />
+                <Label htmlFor="stateFormCategory">State Form Category</Label>
+                <Input id="stateFormCategory" name="stateFormCategory" />
               </div>
               <Button type="submit">Create Account</Button>
             </form>
@@ -285,11 +285,11 @@ export function AccountsTable({ accounts }: { accounts: Account[] }) {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-gaFormCategory">GA Form Category</Label>
+                <Label htmlFor="edit-stateFormCategory">State Form Category</Label>
                 <Input
-                  id="edit-gaFormCategory"
-                  name="gaFormCategory"
-                  defaultValue={editingAccount.gaFormCategory ?? ""}
+                  id="edit-stateFormCategory"
+                  name="stateFormCategory"
+                  defaultValue={editingAccount.stateFormCategory ?? ""}
                 />
               </div>
               <Button type="submit">Save Changes</Button>

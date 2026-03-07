@@ -141,7 +141,7 @@ export async function getAccountsWithTaxCategories() {
       name: accounts.name,
       type: accounts.type,
       scheduleCLine: accounts.scheduleCLine,
-      gaFormCategory: accounts.gaFormCategory,
+      stateFormCategory: accounts.stateFormCategory,
     })
     .from(accounts)
     .where(eq(accounts.isActive, true))
@@ -178,7 +178,7 @@ export async function getAccountBalances() {
       name: accounts.name,
       type: accounts.type,
       scheduleCLine: accounts.scheduleCLine,
-      gaFormCategory: accounts.gaFormCategory,
+      stateFormCategory: accounts.stateFormCategory,
       isActive: accounts.isActive,
       totalDebit: sql<string>`coalesce(sum(${transactionLines.debit}), 0)`,
       totalCredit: sql<string>`coalesce(sum(${transactionLines.credit}), 0)`,
@@ -199,7 +199,7 @@ export async function createAccount(data: {
   name: string;
   type: "asset" | "liability" | "equity" | "income" | "expense";
   scheduleCLine?: string;
-  gaFormCategory?: string;
+  stateFormCategory?: string;
 }) {
   const [created] = await db.insert(accounts).values(data).returning();
   return created;
@@ -210,7 +210,7 @@ export async function updateAccount(
   data: {
     name?: string;
     scheduleCLine?: string | null;
-    gaFormCategory?: string | null;
+    stateFormCategory?: string | null;
     isActive?: boolean;
   }
 ) {

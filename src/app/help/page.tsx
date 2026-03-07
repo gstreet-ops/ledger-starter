@@ -198,7 +198,7 @@ function HelpContent() {
       <div className="border-t pt-6 text-center text-sm text-muted-foreground">
         Still stuck?{" "}
         <a
-          href="https://github.com/gstreet-ops/gstreet-ledger/issues"
+          href="https://github.com/gstreet-ops/ledger-starter/issues"
           target="_blank"
           rel="noopener noreferrer"
           className="underline hover:text-foreground"

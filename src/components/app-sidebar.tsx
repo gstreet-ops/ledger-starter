@@ -60,7 +60,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="border-b px-4 py-3">
-        <h1 className="text-lg font-semibold">GStreet Ledger</h1>
+        <h1 className="text-lg font-semibold">Ledger Starter</h1>
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>

@@ -44,14 +44,14 @@ export const accounts = pgTable("accounts", {
   type: accountTypeEnum("type").notNull(),
   parentId: uuid("parent_id").references((): any => accounts.id),
   scheduleCLine: varchar("schedule_c_line", { length: 50 }),
-  gaFormCategory: varchar("ga_form_category", { length: 100 }),
+  stateFormCategory: varchar("state_form_category", { length: 100 }),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });
 
-// Tax Categories — mapping to IRS / GA lines
+// Tax Categories — mapping to IRS / state lines
 export const taxCategories = pgTable("tax_categories", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),

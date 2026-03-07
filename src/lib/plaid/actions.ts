@@ -10,8 +10,8 @@ import { encrypt, decrypt } from "./crypto";
 
 export async function createLinkToken() {
   const response = await plaidClient.linkTokenCreate({
-    user: { client_user_id: "gstreet-ledger-user" },
-    client_name: "GStreet Ledger",
+    user: { client_user_id: "ledger-starter-user" },
+    client_name: "Ledger Starter",
     products: [Products.Transactions],
     country_codes: [CountryCode.Us],
     language: "en",

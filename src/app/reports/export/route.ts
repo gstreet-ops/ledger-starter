@@ -3,7 +3,8 @@ import { profitAndLoss } from "@/lib/services/reports";
 import {
   selfEmploymentTax,
   federalIncomeTax,
-  georgiaIncomeTax,
+  stateTax,
+  getUserSettings,
 } from "@/lib/services/tax";
 import { narratePnL } from "@/lib/ai/narrate";
 import { parseMoney } from "@/lib/utils/money";
@@ -26,9 +27,11 @@ export async function GET(request: Request) {
 
   const pnl = await profitAndLoss(start, end);
   const netProfit = parseMoney(pnl.netProfit);
+  const settings = await getUserSettings();
+  const userState = settings?.state ?? "XX";
   const federal = federalIncomeTax(netProfit);
   const se = selfEmploymentTax(netProfit);
-  const ga = georgiaIncomeTax(netProfit);
+  const st = stateTax(netProfit, userState);
 
   const monthName = start.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
@@ -66,8 +69,8 @@ export async function GET(request: Request) {
     "## Tax Snapshot (if annualized)",
     `- Federal Income Tax: ${fmt(federal.tax)}`,
     `- Self-Employment Tax: ${fmt(se.totalSeTax)}`,
-    `- Georgia Income Tax: ${fmt(ga.tax)}`,
-    `- **Total Estimated Tax: ${fmt(parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(ga.tax))}**`,
+    `- ${st.stateLabel} Income Tax: ${fmt(st.tax)}`,
+    `- **Total Estimated Tax: ${fmt(parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(st.tax))}**`,
     "",
   ];
 

@@ -6,9 +6,10 @@
 ## Current State
 - **Active branch**: main
 - **Last deployment**: not yet deployed
-- **Supabase project**: {YOUR_SUPABASE_PROJECT_ID} — set after creating your Supabase project
+- **Supabase project**: fmbfoqmlkozxdmruncho
 - **Plaid**: {PLAID_ACCOUNT_EMAIL} — set after creating your Plaid developer account
-- **Phase**: Template scaffold complete — run /setup wizard to begin
+- **Phase**: Fork cleanup complete — independent from gstreet-ledger
+- **Note**: This project has its own Supabase (fmbfoqmlkozxdmruncho) and Vercel project
 
 ## Setup Status
 - [ ] `.env.local` filled in from `.env.local.example`
@@ -34,3 +35,13 @@
 - /setup wizard page added (multi-step: entity → state → filing → Plaid → confirm)
 - seed/demo-data.ts added with fictional Acme Consulting transactions
 - SETUP.md onboarding doc written
+
+### Fork cleanup 2026-03-07
+- Renamed package from gstreet-ledger to ledger-starter
+- Replaced all GStreet branding (sidebar, Plaid, help page GitHub URL)
+- Made AI prompts (narrate, suggest) read state dynamically from user_settings
+- Cleaned FAQ data: removed Georgia-specific entries, made state-agnostic
+- Removed georgiaIncomeTax function; all callers now use stateTax with user_settings state
+- Removed GA fallback in stateTax — returns "Not configured" for unknown states
+- Renamed ga_form_category column to state_form_category (migration 0005)
+- Updated all references across schema, queries, seed files, and UI

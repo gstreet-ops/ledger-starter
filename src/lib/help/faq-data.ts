@@ -81,8 +81,8 @@ export const faqEntries: FaqEntry[] = [
     category: "Accounts & Categories",
     question: "How do tax tags work?",
     answer:
-      "Tax tags map transactions to IRS Schedule C lines and Georgia tax categories. When you categorize a transaction, the tax tag determines where it shows up on your tax return. The **Tax** page shows your current totals by category.",
-    keywords: ["tax tags", "schedule c", "irs", "georgia", "categorize"],
+      "Tax tags map transactions to IRS Schedule C lines and your state's tax categories. When you categorize a transaction, the tax tag determines where it shows up on your tax return. The **Tax** page shows your current totals by category.",
+    keywords: ["tax tags", "schedule c", "irs", "state", "categorize"],
   },
 
   // --- Tax & Reporting ---
@@ -91,8 +91,8 @@ export const faqEntries: FaqEntry[] = [
     category: "Tax & Reporting",
     question: "How do I see my tax liability?",
     answer:
-      "The **Dashboard** shows YTD tax estimates. The **Tax** page breaks it down by federal income, self-employment (15.3%), and Georgia state (5.19% flat). **Quarterly Estimates** shows upcoming 1040-ES and GA payment deadlines.",
-    keywords: ["tax", "liability", "estimate", "quarterly", "1040", "self-employment", "georgia"],
+      "The **Dashboard** shows YTD tax estimates. The **Tax** page breaks it down by federal income, self-employment (15.3%), and your state's income tax. **Quarterly Estimates** shows upcoming 1040-ES and state payment deadlines.",
+    keywords: ["tax", "liability", "estimate", "quarterly", "1040", "self-employment", "state"],
   },
   {
     id: "tax-export",
@@ -103,12 +103,12 @@ export const faqEntries: FaqEntry[] = [
     keywords: ["export", "cpa", "accountant", "year-end", "schedule c", "report"],
   },
   {
-    id: "tax-georgia",
+    id: "tax-state",
     category: "Tax & Reporting",
-    question: "What's the Georgia tax rate?",
+    question: "How does state tax work?",
     answer:
-      "Georgia uses a **5.19% flat income tax rate** with a **$12,000 standard deduction**. The app calculates this automatically from your net business profit.",
-    keywords: ["georgia", "state tax", "5.19", "flat rate", "deduction"],
+      "The app uses the state you selected during setup to look up your state's income tax rate and standard deduction. It calculates state tax automatically from your net business profit. You can change your state in **Settings**.",
+    keywords: ["state tax", "rate", "deduction", "setup"],
   },
 
   // --- Bank Connections (Plaid) ---

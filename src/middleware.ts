@@ -1,9 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { db } from "@/lib/db/drizzle";
-import { userSettings } from "@/lib/db/schema";
 
-const publicPaths = ["/login", "/setup"];
+const publicPaths = ["/login", "/setup", "/demo"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -47,20 +45,6 @@ export async function middleware(request: NextRequest) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     return NextResponse.redirect(loginUrl);
-  }
-
-  // 2. Authenticated but setup not complete → /setup
-  // We do a lightweight DB check here. Runs only on non-public, non-API routes.
-  try {
-    const [settings] = await db.select().from(userSettings).limit(1);
-    if (!settings || !settings.setupComplete) {
-      const setupUrl = request.nextUrl.clone();
-      setupUrl.pathname = "/setup";
-      return NextResponse.redirect(setupUrl);
-    }
-  } catch {
-    // If the DB isn't reachable (e.g. env not set up yet), let the request through
-    // so the user can see the error rather than a redirect loop.
   }
 
   return supabaseResponse;

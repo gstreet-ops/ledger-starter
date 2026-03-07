@@ -1,74 +1,55 @@
 import "dotenv/config";
-import { accounts } from "./schema";
+import { db } from "../src/lib/db/drizzle";
+import { accounts, userSettings } from "../src/lib/db/schema";
 
-// Initial chart of accounts with Schedule C line mappings
-export const seedAccounts = [
-  // Assets (1xxx)
+const seedAccounts = [
   { code: 1000, name: "Cash — Business Checking", type: "asset" as const, scheduleCLine: null, stateFormCategory: null },
   { code: 1010, name: "Cash — Business Savings", type: "asset" as const, scheduleCLine: null, stateFormCategory: null },
   { code: 1020, name: "Accounts Receivable", type: "asset" as const, scheduleCLine: null, stateFormCategory: null },
   { code: 1030, name: "Credit Card Clearing", type: "asset" as const, scheduleCLine: null, stateFormCategory: null },
-
-  // Liabilities (2xxx)
   { code: 2000, name: "Credit Card — Chase", type: "liability" as const, scheduleCLine: null, stateFormCategory: null },
   { code: 2010, name: "Credit Card — Amex", type: "liability" as const, scheduleCLine: null, stateFormCategory: null },
-
-  // Equity (3xxx)
   { code: 3000, name: "Owner's Equity", type: "equity" as const, scheduleCLine: null, stateFormCategory: null },
   { code: 3010, name: "Owner's Draw", type: "equity" as const, scheduleCLine: null, stateFormCategory: null },
   { code: 3020, name: "Retained Earnings", type: "equity" as const, scheduleCLine: null, stateFormCategory: null },
-
-  // Income (4xxx)
   { code: 4000, name: "Gross Receipts — Services", type: "income" as const, scheduleCLine: "1", stateFormCategory: "income" },
   { code: 4010, name: "Other Income", type: "income" as const, scheduleCLine: "6", stateFormCategory: "income" },
-
-  // Expenses (5xxx) — Schedule C Part II
   { code: 5010, name: "Advertising", type: "expense" as const, scheduleCLine: "8", stateFormCategory: "expense" },
-  { code: 5020, name: "Car & Truck Expenses", type: "expense" as const, scheduleCLine: "9", stateFormCategory: "expense" },
-  { code: 5030, name: "Commissions & Fees", type: "expense" as const, scheduleCLine: "10", stateFormCategory: "expense" },
   { code: 5040, name: "Contract Labor", type: "expense" as const, scheduleCLine: "11", stateFormCategory: "expense" },
-  { code: 5050, name: "Insurance (non-health)", type: "expense" as const, scheduleCLine: "15", stateFormCategory: "expense" },
-  { code: 5060, name: "Interest — Mortgage", type: "expense" as const, scheduleCLine: "16a", stateFormCategory: "expense" },
-  { code: 5070, name: "Interest — Other", type: "expense" as const, scheduleCLine: "16b", stateFormCategory: "expense" },
   { code: 5080, name: "Legal & Professional Services", type: "expense" as const, scheduleCLine: "17", stateFormCategory: "expense" },
   { code: 5090, name: "Office Expense", type: "expense" as const, scheduleCLine: "18", stateFormCategory: "expense" },
-  { code: 5100, name: "Rent — Vehicles/Equipment", type: "expense" as const, scheduleCLine: "20a", stateFormCategory: "expense" },
-  { code: 5110, name: "Rent — Other", type: "expense" as const, scheduleCLine: "20b", stateFormCategory: "expense" },
-  { code: 5120, name: "Repairs & Maintenance", type: "expense" as const, scheduleCLine: "21", stateFormCategory: "expense" },
   { code: 5130, name: "Supplies", type: "expense" as const, scheduleCLine: "22", stateFormCategory: "expense" },
-  { code: 5140, name: "Taxes & Licenses", type: "expense" as const, scheduleCLine: "23", stateFormCategory: "expense" },
   { code: 5150, name: "Travel", type: "expense" as const, scheduleCLine: "24a", stateFormCategory: "expense" },
   { code: 5160, name: "Meals (50% deductible)", type: "expense" as const, scheduleCLine: "24b", stateFormCategory: "expense" },
-  { code: 5170, name: "Utilities", type: "expense" as const, scheduleCLine: "25", stateFormCategory: "expense" },
   { code: 5180, name: "Other Expenses", type: "expense" as const, scheduleCLine: "27a", stateFormCategory: "expense" },
-
-  // Expenses (6xxx) — common sub-categories for "Other Expenses" line 27
   { code: 6010, name: "Software & Subscriptions", type: "expense" as const, scheduleCLine: "27a", stateFormCategory: "expense" },
   { code: 6020, name: "Education & Training", type: "expense" as const, scheduleCLine: "27a", stateFormCategory: "expense" },
-  { code: 6030, name: "Bank Fees & Charges", type: "expense" as const, scheduleCLine: "27a", stateFormCategory: "expense" },
+  { code: 6030, name: "Office Supplies", type: "expense" as const, scheduleCLine: "27a", stateFormCategory: "expense" },
   { code: 6040, name: "Telephone & Internet", type: "expense" as const, scheduleCLine: "27a", stateFormCategory: "expense" },
+  { code: 6050, name: "Meals & Entertainment", type: "expense" as const, scheduleCLine: "24b", stateFormCategory: "expense" },
+  { code: 6060, name: "Travel & Lodging", type: "expense" as const, scheduleCLine: "24a", stateFormCategory: "expense" },
+  { code: 6070, name: "Marketing & Promotion", type: "expense" as const, scheduleCLine: "8", stateFormCategory: "expense" },
 ];
 
-// Run seed: npx tsx src/lib/db/seed.ts
 async function main() {
-  const { drizzle } = await import("drizzle-orm/postgres-js");
-  const postgres = await import("postgres");
-
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is required");
-  }
-
-  const client = postgres.default(connectionString);
-  const db = drizzle(client);
-
-  console.log("Seeding chart of accounts...");
-
+  console.log("1/2 Seeding chart of accounts...");
   await db.insert(accounts).values(seedAccounts).onConflictDoNothing();
+  console.log(`    Seeded ${seedAccounts.length} accounts.`);
 
-  console.log(`Seeded ${seedAccounts.length} accounts.`);
-
-  await client.end();
+  console.log("2/2 Creating demo user_settings (setup complete)...");
+  await db.insert(userSettings).values({
+    entityType: "single_member_llc",
+    state: "TX",
+    filingMethod: "schedule_c",
+    taxYearStart: "01-01",
+    fiscalYearEnd: "12-31",
+    plaidEnabled: false,
+    businessName: "Acme Consulting LLC",
+    ownerName: "Jane Smith",
+    timezone: "America/Chicago",
+    setupComplete: true,
+  }).onConflictDoNothing();
+  console.log("    Done.");
 }
 
 main().catch((err) => {

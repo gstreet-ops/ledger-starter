@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { scheduleCReport, selfEmploymentTax, federalIncomeTax, georgiaIncomeTax } from "@/lib/services/tax";
+import { scheduleCReport, selfEmploymentTax, federalIncomeTax, stateTax, getUserSettings } from "@/lib/services/tax";
 import { parseMoney } from "@/lib/utils/money";
 
 export async function GET(request: NextRequest) {
@@ -12,9 +12,11 @@ export async function GET(request: NextRequest) {
 
   const report = await scheduleCReport(year);
   const netProfit = parseMoney(report.netProfit);
+  const settings = await getUserSettings();
+  const userState = settings?.state ?? "XX";
   const se = selfEmploymentTax(netProfit);
   const federal = federalIncomeTax(netProfit);
-  const ga = georgiaIncomeTax(netProfit);
+  const st = stateTax(netProfit, userState);
 
   const lines: string[] = [];
   lines.push("Schedule C Line,Description,YTD Total");
@@ -34,9 +36,9 @@ export async function GET(request: NextRequest) {
   lines.push("Tax Estimates,,");
   lines.push(`"Federal Income Tax","",${federal.tax}`);
   lines.push(`"Self-Employment Tax","",${se.totalSeTax}`);
-  lines.push(`"Georgia Income Tax","",${ga.tax}`);
+  lines.push(`"${st.stateLabel} Income Tax","",${st.tax}`);
 
-  const totalTax = parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(ga.tax);
+  const totalTax = parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(st.tax);
   lines.push(`"Total Estimated Tax","",${totalTax.toFixed(2)}`);
 
   const csv = lines.join("\n");

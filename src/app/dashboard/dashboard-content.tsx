@@ -36,7 +36,7 @@ type RecentTxn = {
   status: string;
   totalAmount: string;
 };
-type TaxSummary = { federal: string; se: string; ga: string; total: string };
+type TaxSummary = { federal: string; se: string; state: string; stateLabel: string; total: string };
 type NextPayment = {
   quarter: number;
   label: string;
@@ -169,8 +169,8 @@ export function DashboardContent({
               <p className="text-2xl font-bold">{formatCurrency(taxSummary.total)}</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Federal {formatCurrency(taxSummary.federal)} + SE{" "}
-                {formatCurrency(taxSummary.se)} + GA{" "}
-                {formatCurrency(taxSummary.ga)}
+                {formatCurrency(taxSummary.se)} + {taxSummary.stateLabel}{" "}
+                {formatCurrency(taxSummary.state)}
               </p>
               {effectiveTaxRate && (
                 <p className="text-xs text-muted-foreground mt-1">

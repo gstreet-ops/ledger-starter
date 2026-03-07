@@ -29,6 +29,20 @@
       "when": 1772776685639,
       "tag": "0003_add-file-import-tables",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1772780000000,
+      "tag": "0004_add-user-settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1772870400000,
+      "tag": "0005_rename-ga-form-category",
+      "breakpoints": true
     }
   ]
 }

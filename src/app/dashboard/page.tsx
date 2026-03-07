@@ -1,11 +1,11 @@
 export const dynamic = "force-dynamic";
 
-import { getRecentTransactions, getAccountBalances } from "@/lib/db/queries";
+import { getRecentTransactions, getAccountBalances, getUserSettings } from "@/lib/db/queries";
 import { profitAndLoss, monthlyPnl } from "@/lib/services/reports";
 import {
   selfEmploymentTax,
   federalIncomeTax,
-  georgiaIncomeTax,
+  stateTax,
 } from "@/lib/services/tax";
 import { nextQuarterlyPayment } from "@/lib/services/quarterly-estimates";
 import { DashboardContent } from "./dashboard-content";
@@ -44,17 +44,20 @@ export default async function DashboardPage() {
 
   // YTD tax summary
   const netProfit = parseMoney(pnl.netProfit);
+  const settings = await getUserSettings();
+  const userState = settings?.state ?? "XX";
   const federal = federalIncomeTax(netProfit);
   const se = selfEmploymentTax(netProfit);
-  const ga = georgiaIncomeTax(netProfit);
+  const st = stateTax(netProfit, userState);
 
   const totalTax =
-    parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(ga.tax);
+    parseMoney(federal.tax) + parseMoney(se.totalSeTax) + parseMoney(st.tax);
 
   const taxSummary = {
     federal: federal.tax,
     se: se.totalSeTax,
-    ga: ga.tax,
+    state: st.tax,
+    stateLabel: st.stateLabel,
     total: totalTax.toFixed(2),
   };
 

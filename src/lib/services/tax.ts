@@ -216,7 +216,6 @@ export function selfEmploymentTax(netProfit: number): {
 /**
  * Generic state income tax calculator.
  * Uses STATE_TAX_RATES to look up the user's state rate and standard deduction.
- * Falls back to GA rates if state is unknown (safe default for an existing GA-built template).
  *
  * @param netProfit - Schedule C net profit
  * @param state     - 2-letter state code from user_settings (e.g. "TX", "CA")
@@ -231,7 +230,16 @@ export function stateTax(
   stateLabel: string;
   noIncomeTax: boolean;
 } {
-  const stateInfo = STATE_TAX_RATES[state.toUpperCase()] ?? STATE_TAX_RATES["GA"];
+  const stateInfo = STATE_TAX_RATES[state.toUpperCase()];
+  if (!stateInfo) {
+    return {
+      taxableIncome: "0.00",
+      tax: "0.00",
+      effectiveRate: "0.00",
+      stateLabel: "Not configured",
+      noIncomeTax: false,
+    };
+  }
 
   if (netProfit <= 0 || stateInfo.noIncomeTax) {
     return {
@@ -256,23 +264,6 @@ export function stateTax(
     effectiveRate: effectiveRate.toFixed(2),
     stateLabel: stateInfo.label,
     noIncomeTax: false,
-  };
-}
-
-/**
- * @deprecated Use stateTax(netProfit, state) instead.
- * Kept for backward compatibility — calls stateTax with "GA".
- */
-export function georgiaIncomeTax(netProfit: number): {
-  taxableIncome: string;
-  tax: string;
-  effectiveRate: string;
-} {
-  const result = stateTax(netProfit, "GA");
-  return {
-    taxableIncome: result.taxableIncome,
-    tax: result.tax,
-    effectiveRate: result.effectiveRate,
   };
 }
 
@@ -352,9 +343,8 @@ export async function quarterlyEstimate(year: number): Promise<{
   const report = await scheduleCReport(year);
   const netProfit = parseMoney(report.netProfit);
 
-  // Read state from user_settings; fall back to GA if not configured
   const settings = await getUserSettings();
-  const state = settings?.state ?? "GA";
+  const state = settings?.state ?? "XX";
 
   const federal = federalIncomeTax(netProfit);
   const se = selfEmploymentTax(netProfit);

@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { getAccountsWithTaxCategories } from "@/lib/db/queries";
+import { getAccountsWithTaxCategories, getUserSettings } from "@/lib/db/queries";
+import { STATE_TAX_RATES } from "@/lib/services/tax";
 
 type ImportRowInput = {
   id: string;
@@ -54,7 +55,11 @@ export async function suggestCategoriesBatch(
     )
     .join("\n");
 
-  const systemPrompt = `You are a bookkeeping assistant for a US single-member LLC (Schedule C filer, Georgia).
+  const settings = await getUserSettings();
+  const stateCode = settings?.state ?? "XX";
+  const stateLabel = STATE_TAX_RATES[stateCode]?.label ?? stateCode;
+
+  const systemPrompt = `You are a bookkeeping assistant for a US single-member LLC (Schedule C filer, ${stateLabel}).
 Given bank transactions, suggest the best ledger account for each.
 
 CHART OF ACCOUNTS:
