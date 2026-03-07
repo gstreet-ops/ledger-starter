@@ -8,6 +8,9 @@
  * Run scripts/purge-synthetic-data.ts to remove them.
  */
 
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 import { purgeDemoData, seedDemoData } from "../src/lib/services/demo-seed";
 
 async function main() {
