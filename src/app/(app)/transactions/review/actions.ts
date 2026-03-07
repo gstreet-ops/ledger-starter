@@ -13,11 +13,15 @@ import {
 import { createPosting } from "@/lib/services/posting";
 import { applyRules } from "@/lib/services/categorization";
 import { suggestCategoriesBatch } from "@/lib/ai/suggest";
+import { isCurrentUserDemo } from "@/lib/ai/demo-check";
+
+const DEMO_MSG = "Demo mode — changes are not saved. Deploy your own instance to use all features.";
 
 export async function acceptSuggestion(
   importRowId: string,
   accountId: string
 ) {
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
   const row = await getImportRowById(importRowId);
   if (!row || row.status !== "pending") return { error: "Row not found or not pending" };
 
@@ -45,6 +49,7 @@ export async function editAndAccept(
 }
 
 export async function skipRow(importRowId: string) {
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
   await db
     .update(importRows)
     .set({ status: "ignored" })
@@ -60,6 +65,7 @@ export async function createRuleFromAcceptance(
   accountId: string,
   priority: number
 ) {
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
   const rule = await createRule({
     name: `Auto: ${pattern}`,
     pattern,
@@ -73,6 +79,7 @@ export async function createRuleFromAcceptance(
 }
 
 export async function bulkAccept(importRowIds: string[], accountIds: string[]) {
+  if (await isCurrentUserDemo()) return [{ id: "", success: false, error: DEMO_MSG }];
   const results: Array<{ id: string; success: boolean; error?: string }> = [];
 
   for (let i = 0; i < importRowIds.length; i++) {

@@ -3,8 +3,10 @@
 import { db } from "@/lib/db/drizzle";
 import { userSettings } from "@/lib/db/schema";
 import { revalidatePath } from "next/cache";
+import { isCurrentUserDemo } from "@/lib/ai/demo-check";
 
 export async function toggleCommunitySharing(enabled: boolean) {
+  if (await isCurrentUserDemo()) return;
   const [settings] = await db.select().from(userSettings).limit(1);
   if (!settings) return;
 
@@ -18,6 +20,7 @@ export async function toggleCommunitySharing(enabled: boolean) {
 }
 
 export async function snoozeNudge() {
+  if (await isCurrentUserDemo()) return;
   const [settings] = await db.select().from(userSettings).limit(1);
   if (!settings) return;
 

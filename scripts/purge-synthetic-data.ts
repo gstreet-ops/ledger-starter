@@ -23,6 +23,7 @@ async function main() {
     "transaction_lines",
     "transactions",
     "estimated_tax_payments",
+    "categorization_rules",
   ];
 
   console.log("Purging synthetic data...\n");
@@ -44,10 +45,8 @@ async function main() {
   console.log("\nRemaining structural data:");
   const [acctCount] = await sql`SELECT count(*) as n FROM accounts`;
   const [taxCount] = await sql`SELECT count(*) as n FROM tax_categories`;
-  const [ruleCount] = await sql`SELECT count(*) as n FROM categorization_rules`;
   console.log(`  accounts: ${acctCount.n}`);
   console.log(`  tax_categories: ${taxCount.n}`);
-  console.log(`  categorization_rules: ${ruleCount.n}`);
 
   console.log("\nDone. Database ready for real imports.");
   await sql.end();

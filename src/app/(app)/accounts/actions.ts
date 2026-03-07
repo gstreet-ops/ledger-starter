@@ -2,6 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { createAccount, updateAccount } from "@/lib/db/queries";
+import { isCurrentUserDemo } from "@/lib/ai/demo-check";
+
+const DEMO_MSG = "Demo mode — changes are not saved. Deploy your own instance to use all features.";
 
 export async function addAccount(formData: FormData) {
   const code = parseInt(formData.get("code") as string, 10);
@@ -10,6 +13,7 @@ export async function addAccount(formData: FormData) {
   const scheduleCLine = (formData.get("scheduleCLine") as string) || undefined;
   const stateFormCategory = (formData.get("stateFormCategory") as string) || undefined;
 
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
   if (!code || !name || !type) {
     return { error: "Code, name, and type are required" };
   }
@@ -24,6 +28,7 @@ export async function addAccount(formData: FormData) {
 }
 
 export async function editAccount(formData: FormData) {
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
   const scheduleCLine = (formData.get("scheduleCLine") as string) || null;
@@ -39,6 +44,7 @@ export async function editAccount(formData: FormData) {
 }
 
 export async function toggleAccountActive(id: string, isActive: boolean) {
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
   try {
     await updateAccount(id, { isActive });
     revalidatePath("/accounts");

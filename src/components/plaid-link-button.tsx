@@ -18,7 +18,13 @@ export function PlaidLinkButton({ onSuccess }: { onSuccess?: () => void }) {
 
   useEffect(() => {
     createLinkToken()
-      .then(({ linkToken }) => setLinkToken(linkToken))
+      .then((result: any) => {
+        if (result.error) {
+          setError(result.error);
+        } else if (result.linkToken) {
+          setLinkToken(result.linkToken);
+        }
+      })
       .catch((e) => {
         console.error("[Plaid] Link token error:", e);
         setError("Failed to initialize Plaid Link");
@@ -30,8 +36,9 @@ export function PlaidLinkButton({ onSuccess }: { onSuccess?: () => void }) {
       setLoading(true);
       setError(null);
       try {
-        const { itemId } = await exchangePublicToken(publicToken);
-        await fetchAndStoreAccounts(itemId);
+        const result = await exchangePublicToken(publicToken) as any;
+        if (result.error) throw new Error(result.error);
+        await fetchAndStoreAccounts(result.itemId);
         onSuccess?.();
         router.refresh();
       } catch (e) {

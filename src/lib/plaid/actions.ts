@@ -7,8 +7,12 @@ import { plaidClient } from "./client";
 import { db } from "../db/drizzle";
 import { plaidItems, plaidAccounts } from "../db/schema";
 import { encrypt, decrypt } from "./crypto";
+import { isCurrentUserDemo } from "@/lib/ai/demo-check";
+
+const DEMO_MSG = "Demo mode — changes are not saved. Deploy your own instance to use all features.";
 
 export async function createLinkToken() {
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
   const response = await plaidClient.linkTokenCreate({
     user: { client_user_id: "ledger-starter-user" },
     client_name: "Ledger Starter",
@@ -21,6 +25,7 @@ export async function createLinkToken() {
 }
 
 export async function exchangePublicToken(publicToken: string) {
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
   console.log("[Plaid] Exchanging public token...");
 
   const response = await plaidClient.itemPublicTokenExchange({

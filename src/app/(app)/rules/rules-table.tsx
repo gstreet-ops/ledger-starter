@@ -59,17 +59,21 @@ export function RulesTable({
   function handleAdd() {
     if (!newName || !newPattern || !newAccountId) return;
     startTransition(async () => {
-      const rule = await addRule({
+      const result = await addRule({
         name: newName,
         pattern: newPattern,
         matchField: newMatchField,
         accountId: newAccountId,
         priority: newPriority,
       });
+      if ("error" in result) {
+        alert(result.error);
+        return;
+      }
       // Refresh by adding with account info
       const acct = accounts.find((a) => a.id === newAccountId);
       setRules((prev) => [
-        { ...rule, accountCode: acct?.code ?? 0, accountName: acct?.name ?? "" },
+        { ...result, accountCode: acct?.code ?? 0, accountName: acct?.name ?? "" },
         ...prev,
       ]);
       setNewName("");

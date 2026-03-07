@@ -3,6 +3,9 @@
 import { redirect } from "next/navigation";
 import { createTransaction } from "@/lib/db/queries";
 import { parseMoney } from "@/lib/utils/money";
+import { isCurrentUserDemo } from "@/lib/ai/demo-check";
+
+const DEMO_MSG = "Demo mode — changes are not saved. Deploy your own instance to use all features.";
 
 export async function submitTransaction(data: {
   date: string;
@@ -10,6 +13,8 @@ export async function submitTransaction(data: {
   memo: string;
   lines: { accountId: string; debit: string; credit: string; memo: string }[];
 }) {
+  if (await isCurrentUserDemo()) return { error: DEMO_MSG };
+
   const totalDebitCents = data.lines.reduce((s, l) => s + Math.round(parseMoney(l.debit || "0") * 100), 0);
   const totalCreditCents = data.lines.reduce((s, l) => s + Math.round(parseMoney(l.credit || "0") * 100), 0);
 

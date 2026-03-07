@@ -3,6 +3,7 @@
 import { db } from "@/lib/db/drizzle";
 import { userSettings } from "@/lib/db/schema";
 import { redirect } from "next/navigation";
+import { isCurrentUserDemo } from "@/lib/ai/demo-check";
 
 export type SetupFormData = {
   entityType: string;
@@ -16,6 +17,7 @@ export type SetupFormData = {
 };
 
 export async function saveSetup(data: SetupFormData) {
+  if (await isCurrentUserDemo()) return { error: "Demo mode — changes are not saved. Deploy your own instance to use all features." };
   // Upsert: only one settings row per installation
   const existing = await db.select().from(userSettings).limit(1);
 
