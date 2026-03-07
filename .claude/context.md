@@ -82,7 +82,12 @@
 - Middleware updated to allow public access to landing page
 - Vercel env vars verified: NEXT_PUBLIC_DEMO_EMAIL, DEMO_EMAIL, DEMO_PASSWORD, NEXT_PUBLIC_SITE_URL
 
-### Architecture decisions recorded — 2026-03-07
+### Demo AI samples + Plaid fix — 2026-03-07
+- Pre-generated narrative and period comparison for demo user (no Anthropic API needed)
+- Pattern-based categorization suggestions in demo-suggestions.ts
+- isCurrentUserDemo() helper in demo-check.ts
+- Connections page: 3-state handling (demo/not-configured/normal)
+- NOTE: Connections page may not be receiving isDemo prop — needs verification next session
 - Community feature tracking: Manual Share with Gentle Nudges (C3b+)
   - "My Instance" comparison page, manual share button, change-based nudges
   - Phased: now=manual share, 10-20 forks=nudges+changelog, 50+=hybrid auto-sync
