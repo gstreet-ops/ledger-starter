@@ -1,0 +1,46 @@
+{
+  "version": "0.1.0",
+  "generatedAt": "2026-03-07T00:00:00.000Z",
+  "tables": [
+    "accounts",
+    "categorization_rules",
+    "estimated_tax_payments",
+    "file_import_batches",
+    "file_import_rows",
+    "import_rows",
+    "plaid_accounts",
+    "plaid_items",
+    "sync_batches",
+    "tax_categories",
+    "transaction_lines",
+    "transactions",
+    "user_settings"
+  ],
+  "routes": [
+    "/",
+    "/accounts",
+    "/connections",
+    "/dashboard",
+    "/demo",
+    "/help",
+    "/imports",
+    "/login",
+    "/reports",
+    "/reports/export",
+    "/reports/narrative",
+    "/rules",
+    "/settings",
+    "/setup",
+    "/tax",
+    "/tax/export",
+    "/tax/quarterly",
+    "/transactions",
+    "/transactions/journal",
+    "/transactions/new",
+    "/transactions/review"
+  ],
+  "integrations": {
+    "plaid": "PLAID_CLIENT_ID",
+    "anthropic": "ANTHROPIC_API_KEY"
+  }
+}

@@ -321,6 +321,11 @@ export const userSettings = pgTable("user_settings", {
   timezone: text("timezone").notNull().default("America/New_York"),
   // Wizard state
   setupComplete: boolean("setup_complete").notNull().default(false),
+  // Community sharing
+  communitySharingEnabled: boolean("community_sharing_enabled").notNull().default(false),
+  lastSharedFingerprint: jsonb("last_shared_fingerprint"),
+  lastSharedAt: timestamp("last_shared_at", { withTimezone: true }),
+  nudgeSnoozedUntil: timestamp("nudge_snoozed_until", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

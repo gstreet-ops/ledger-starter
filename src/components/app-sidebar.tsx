@@ -18,6 +18,7 @@ import {
   LogOut,
   FileUp,
   HelpCircle,
+  Users,
 } from "lucide-react";
 import {
   Sidebar,
@@ -42,6 +43,7 @@ const navItems = [
   { title: "Tax", href: "/tax", icon: Calculator },
   { title: "Quarterly Estimates", href: "/tax/quarterly", icon: CalendarClock },
   { title: "Rules", href: "/rules", icon: ListChecks },
+  { title: "Community", href: "/community", icon: Users },
   { title: "Narrative", href: "/reports/narrative", icon: MessageSquareText },
   { title: "Settings", href: "/settings", icon: Settings },
 ];
