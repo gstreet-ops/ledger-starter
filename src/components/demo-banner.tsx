@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, RotateCcw, Loader2 } from "lucide-react";
+import { ShareDemo } from "./share-demo";
 
 const DEPLOY_URL =
   "https://vercel.com/new/clone?repository-url=https://github.com/gstreet-ops/ledger-starter&project-name=my-ledger&integration-ids=oac_jUduyjQgOyzev1fjrW83NYOv&env=PLAID_CLIENT_ID,PLAID_SECRET,PLAID_ENV,PLAID_TOKEN_ENCRYPTION_KEY,ANTHROPIC_API_KEY&envDescription=Plaid%20and%20Anthropic%20are%20optional.%20Supabase%20env%20vars%20are%20set%20automatically%20by%20the%20integration.&envLink=https://github.com/gstreet-ops/ledger-starter/blob/main/SETUP.md";
@@ -27,7 +28,7 @@ export function DemoBanner({ isDemo = false, businessName }: { isDemo?: boolean;
 
   return (
     <div className="w-full bg-amber-50 border-b border-amber-200 px-4 py-2 text-amber-800">
-      <div className="flex items-center justify-center gap-4 text-sm">
+      <div className="flex items-center justify-center gap-4 text-sm flex-wrap">
         <span>
           You&apos;re viewing a <strong>demo</strong> of Ledger Starter{businessName ? ` — ${businessName}` : ""}
         </span>
@@ -47,6 +48,7 @@ export function DemoBanner({ isDemo = false, businessName }: { isDemo?: boolean;
         >
           View on GitHub
         </a>
+        <ShareDemo />
         <button
           onClick={handleReset}
           disabled={resetting}
